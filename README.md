@@ -1,421 +1,281 @@
+# SGE — Plano Geral de Desenvolvimento do Software
 
-# SGE — Plano de Desenvolvimento do Software
+Este documento organiza as etapas de desenvolvimento do **Sistema de Gerenciamento Escolar (SGE)** para orientar o trabalho do grupo durante a implementação. O objetivo é manter o desenvolvimento alinhado à documentação de requisitos, análise, design, arquitetura e plano de projeto.
 
-Este documento organiza as etapas de desenvolvimento do **Sistema de Gerenciamento Escolar (SGE)** para orientar o grupo durante a implementação. O objetivo é manter o desenvolvimento coerente com a documentação de requisitos, análise, arquitetura e plano de projeto.
+O SGE será desenvolvido como uma **aplicação web centralizada**, acessada por navegador, com separação entre **frontend**, **backend**, **banco de dados** e **documentação/testes**. A arquitetura deve preservar a organização em camadas, o controle de acesso por perfil e a rastreabilidade entre requisitos, casos de uso, modelos e implementação.
 
 ---
 
 ## 1. Objetivo do desenvolvimento
 
-Desenvolver uma aplicação web centralizada para gestão acadêmica, contemplando autenticação, controle de acesso por perfil, gerenciamento de usuários, disciplinas, turmas, matrículas, notas, frequência, materiais didáticos, atividades, entregas e relatórios acadêmicos.
+Desenvolver uma versão funcional do SGE capaz de apoiar processos acadêmicos e administrativos de uma instituição de ensino, contemplando:
 
-O desenvolvimento deve respeitar os seguintes pontos definidos na documentação:
-
-- aplicação web centralizada;
-- separação entre frontend, backend e banco de dados;
-- backend organizado em camadas;
-- monólito modular;
+- autenticação de usuários;
 - controle de acesso por perfil;
-- persistência em banco relacional;
-- rastreabilidade entre requisitos, casos de uso, classes, módulos e implementação;
-- foco inicial no backend.
+- gerenciamento de usuários;
+- gerenciamento de disciplinas;
+- gerenciamento de turmas;
+- matrícula de discentes;
+- registro de notas;
+- registro de frequência;
+- disponibilização de materiais didáticos;
+- gerenciamento de atividades;
+- envio de atividades por discentes;
+- consulta de desempenho acadêmico;
+- geração de relatórios acadêmicos.
 
 ---
 
-## 2. Escopo funcional do SGE
+## 2. Escopo geral do sistema
 
-O sistema será desenvolvido com base nos seguintes módulos principais:
+O sistema deve atender três perfis principais:
 
-| Módulo | Responsabilidade |
-|---|---|
-| Acesso e Segurança | Login, autenticação, autorização, JWT e controle por perfil |
-| Usuários | Cadastro, consulta, edição e desativação de administradores, docentes e discentes |
-| Gestão Acadêmica | Disciplinas, turmas, períodos letivos e vínculos com docentes |
-| Matrículas | Matrícula de discentes em turmas e controle de duplicidade |
-| Notas | Registro, atualização e consulta de notas |
-| Frequência | Registro, atualização, consulta e cálculo de frequência |
-| AVA | Materiais didáticos, atividades e entregas dos discentes |
-| Relatórios | Boletins, diários de classe e relatórios acadêmicos |
-| Persistência | Repositories, entidades, migrations e integridade dos dados |
-| Implantação | Configuração de ambiente, banco, deploy e documentação final |
+### Administrador
 
----
+Responsável pela organização estrutural do sistema.
 
-## 3. Stack tecnológica recomendada
+Principais funções:
 
-### Backend
+- gerenciar usuários;
+- gerenciar disciplinas;
+- gerenciar turmas;
+- matricular discentes;
+- consultar dados acadêmicos autorizados;
+- gerar relatórios acadêmicos.
 
-- Java 21
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- Spring Security
-- JWT
-- Bean Validation
-- Lombok
-- PostgreSQL Driver
-- Flyway Migration
-- Maven
+### Docente
 
-### Banco de dados
+Responsável pelo acompanhamento das turmas às quais estiver vinculado.
 
-- PostgreSQL
-- Migrations com Flyway
-- Dados iniciais com seed para testes
+Principais funções:
 
-### Frontend, para etapa posterior
+- consultar suas turmas;
+- registrar notas;
+- registrar frequência;
+- disponibilizar materiais didáticos;
+- cadastrar atividades;
+- acompanhar entregas dos discentes.
 
-- React
-- TypeScript
-- React Router
-- Axios
-- Context API ou solução equivalente para autenticação
+### Discente
 
-### Ferramentas de apoio
+Responsável por consultar suas informações acadêmicas e interagir com os recursos disponibilizados pelo docente.
 
-- Git e GitHub
-- Postman ou Insomnia
-- Draw.io, Figma ou ferramenta equivalente para apoio visual
-- README técnico no repositório
-- Issues ou Project Board para controle de tarefas
+Principais funções:
+
+- consultar notas;
+- consultar frequência;
+- consultar disciplinas e turmas;
+- acessar materiais didáticos;
+- enviar atividades;
+- consultar desempenho acadêmico.
 
 ---
 
-## 4. Arquitetura geral
+## 3. Arquitetura geral da solução
 
-O SGE deve ser implementado como **monólito modular**, ou seja, uma aplicação backend única, mas organizada internamente por módulos.
+A solução deve seguir uma arquitetura em camadas, organizada como uma aplicação web modular.
 
-A arquitetura deve seguir a separação:
+### Camadas principais
 
 ```text
-Controller → Service → Repository → Banco de Dados
+Frontend Web
+    ↓
+Backend API
+    ↓
+Camada de Aplicação / Serviços
+    ↓
+Camada de Domínio
+    ↓
+Camada de Persistência
+    ↓
+Banco de Dados
 ```
 
-Responsabilidades:
-
-| Camada | Responsabilidade |
-|---|---|
-| Controller | Receber requisições HTTP e devolver respostas |
-| Service | Concentrar regras de negócio |
-| Repository | Acessar o banco de dados |
-| Model/Entity | Representar entidades persistentes |
-| DTO | Transportar dados entre API e cliente |
-| Security | Autenticação, autorização e filtros |
-| Exception | Tratamento padronizado de erros |
-
-Regra importante: **Controller não deve conter regra de negócio**. Toda regra deve ficar no Service.
-
----
-
-## 5. Estrutura inicial do repositório
+### Separação esperada
 
 ```text
 sge/
-├── backend/
-│   ├── src/main/java/br/ufs/sge/
-│   │   ├── SgeApplication.java
-│   │   ├── auth/
-│   │   ├── usuario/
-│   │   ├── academico/
-│   │   ├── ava/
-│   │   ├── relatorio/
-│   │   ├── shared/
-│   │   └── config/
-│   │
-│   ├── src/main/resources/
-│   │   ├── application.yml
-│   │   └── db/migration/
-│   │
-│   └── pom.xml
-│
 ├── frontend/
-│   └── README.md
-│
+├── backend/
 ├── database/
-│   ├── schema.sql
-│   └── seed.sql
-│
 ├── docs/
-│   ├── api/
-│   ├── testes/
-│   ├── prints/
-│   └── apresentacao/
-│
 └── README.md
 ```
 
+### Responsabilidade de cada parte
+
+| Parte | Responsabilidade |
+|---|---|
+| Frontend | Telas, navegação, formulários, consumo da API e experiência do usuário |
+| Backend | Regras de negócio, autenticação, autorização, API REST e integração com banco |
+| Banco de dados | Persistência, integridade, relacionamentos e dados acadêmicos |
+| Documentação | Registro de decisões, endpoints, testes, instruções de execução e evidências |
+| Testes | Validação funcional, integração entre módulos e conferência dos casos de uso |
+
 ---
 
-## 6. Estrutura recomendada do backend
+## 4. Tecnologias recomendadas
+
+### Frontend
+
+- React;
+- JavaScript ou TypeScript;
+- HTML;
+- CSS;
+- Axios ou Fetch API;
+- React Router;
+- biblioteca de componentes, se o grupo decidir usar.
+
+### Backend
+
+- Java;
+- Spring Boot;
+- Spring Web;
+- Spring Data JPA;
+- Spring Security;
+- JWT;
+- Bean Validation;
+- Maven;
+- Lombok, se o grupo decidir usar.
+
+### Banco de dados
+
+- PostgreSQL;
+- migrations com Flyway ou Liquibase;
+- dados iniciais de teste com seed.
+
+### Ferramentas de apoio
+
+- Git e GitHub;
+- Postman ou Insomnia;
+- Figma, se houver protótipo;
+- Docker, se o grupo decidir padronizar ambiente;
+- Trello, GitHub Projects ou outra ferramenta de organização.
+
+---
+
+## 5. Módulos funcionais do SGE
+
+O desenvolvimento deve ser dividido em módulos. Cada módulo deve possuir telas, endpoints, regras de negócio, persistência e testes correspondentes.
+
+---
+
+## 5.1 Módulo de Acesso e Segurança
+
+### Objetivo
+
+Permitir que usuários acessem o sistema conforme seu perfil.
+
+### Casos de uso relacionados
+
+- UC01 — Realizar Login.
+
+### Funcionalidades
+
+- login;
+- logout;
+- identificação do usuário autenticado;
+- controle de acesso por perfil;
+- recuperação de senha, se houver tempo;
+- proteção de rotas no frontend;
+- proteção de endpoints no backend.
+
+### Regras principais
+
+- Usuário precisa estar cadastrado para acessar o sistema.
+- O sistema deve validar as credenciais.
+- O sistema deve identificar o perfil do usuário.
+- Cada perfil deve acessar apenas suas funcionalidades permitidas.
+- Senhas não devem ser armazenadas em texto puro.
+
+### Entregas esperadas
 
 ```text
-backend/src/main/java/br/ufs/sge/
-├── auth/
-│   ├── controller/
-│   ├── dto/
-│   ├── service/
-│   └── security/
-│
-├── usuario/
-│   ├── controller/
-│   ├── dto/
-│   ├── model/
-│   ├── repository/
-│   └── service/
-│
-├── academico/
-│   ├── disciplina/
-│   ├── turma/
-│   ├── matricula/
-│   ├── nota/
-│   └── frequencia/
-│
-├── ava/
-│   ├── material/
-│   ├── atividade/
-│   └── entrega/
-│
-├── relatorio/
-│   ├── controller/
-│   ├── dto/
-│   └── service/
-│
-├── shared/
-│   ├── exception/
-│   ├── dto/
-│   └── validation/
-│
-└── config/
+[ ] Tela de login
+[ ] Serviço de autenticação no backend
+[ ] Token ou sessão configurada
+[ ] Rotas protegidas no frontend
+[ ] Endpoints protegidos no backend
+[ ] Usuário administrador inicial para teste
 ```
 
 ---
 
-## 7. Ordem geral de desenvolvimento
+## 5.2 Módulo de Usuários
 
-A implementação deve seguir esta ordem:
+### Objetivo
 
-```text
-1. Setup do projeto
-2. Backend base
-3. Autenticação e segurança
-4. Usuários
-5. Disciplinas
-6. Turmas
-7. Matrículas
-8. Notas
-9. Frequência
-10. AVA: materiais, atividades e entregas
-11. Relatórios
-12. Integração com frontend
-13. Testes
-14. Deploy
-15. Documentação final e apresentação
-```
+Permitir ao administrador gerenciar os usuários do sistema.
 
-Como decisão do grupo, iniciaremos pelo **backend**.
+### Casos de uso relacionados
 
----
+- UC02 — Gerenciar Usuários.
 
-# 8. Etapas detalhadas do backend
+### Funcionalidades
 
-## Etapa 0 — Preparação do ambiente
+- cadastrar usuário;
+- consultar usuários;
+- editar usuário;
+- desativar usuário;
+- reativar usuário, se necessário;
+- filtrar usuários por perfil;
+- visualizar detalhes de usuário.
 
-Objetivo: deixar o ambiente pronto para desenvolvimento.
+### Perfis envolvidos
 
-### Tarefas
+| Perfil | Permissão |
+|---|---|
+| Administrador | Gerencia usuários |
+| Docente | Não gerencia usuários |
+| Discente | Não gerencia usuários |
 
-- [ ] Criar repositório no GitHub.
-- [ ] Criar branch principal `main`.
-- [ ] Criar branch de desenvolvimento `develop`.
-- [ ] Definir padrão de branches.
-- [ ] Criar projeto Spring Boot.
-- [ ] Configurar Java 21.
-- [ ] Configurar Maven.
-- [ ] Configurar PostgreSQL.
-- [ ] Criar banco `sge_db`.
-- [ ] Configurar `application.yml`.
-- [ ] Testar conexão com banco.
-- [ ] Criar estrutura de pacotes.
-- [ ] Criar README inicial do backend.
-
-### Entrega esperada
-
-Backend subindo localmente, conectado ao PostgreSQL e com estrutura inicial pronta.
-
----
-
-## Etapa 1 — Base comum do backend
-
-Objetivo: criar elementos usados por todos os módulos.
-
-### Tarefas
-
-- [ ] Criar classe principal `SgeApplication`.
-- [ ] Criar pacote `shared.exception`.
-- [ ] Criar tratamento global de exceções com `@RestControllerAdvice`.
-- [ ] Criar DTO padrão para respostas de erro.
-- [ ] Criar DTO padrão para mensagens simples.
-- [ ] Configurar validação com Bean Validation.
-- [ ] Configurar CORS.
-- [ ] Criar primeira migration do banco.
-
-### Entrega esperada
-
-API com tratamento de erros padronizado e pronta para receber os módulos funcionais.
-
----
-
-## Etapa 2 — Usuário, perfil e segurança base
-
-Objetivo: criar a base de usuários do sistema.
-
-### Entidades iniciais
+### Entidades principais
 
 ```text
 Usuario
 Perfil
+Administrador
+Docente
+Discente
 ```
 
-### Perfis
+### Entregas esperadas
 
 ```text
-ADMINISTRADOR
-DOCENTE
-DISCENTE
+[ ] CRUD de usuários no backend
+[ ] Telas de cadastro/listagem/edição no frontend
+[ ] Validação de campos obrigatórios
+[ ] Controle de perfil
+[ ] Desativação lógica de usuário
 ```
-
-### Campos mínimos de Usuario
-
-```text
-id
-nome
-email
-senha
-perfil
-ativo
-createdAt
-updatedAt
-```
-
-### Tarefas
-
-- [ ] Criar enum `Perfil`.
-- [ ] Criar entidade `Usuario`.
-- [ ] Criar tabela `usuarios`.
-- [ ] Criar `UsuarioRepository`.
-- [ ] Criar migration para usuários.
-- [ ] Criar seed com usuário administrador inicial.
-- [ ] Configurar hash de senha com BCrypt.
-
-### Entrega esperada
-
-Usuários persistidos no banco e administrador inicial criado para login.
 
 ---
 
-## Etapa 3 — Autenticação e autorização
+## 5.3 Módulo de Disciplinas
 
-Objetivo: permitir login e controle de acesso por perfil.
+### Objetivo
 
-### Pacote
+Permitir o gerenciamento das disciplinas da instituição.
 
-```text
-auth/
-├── controller/
-├── dto/
-├── service/
-└── security/
-```
+### Casos de uso relacionados
 
-### Classes sugeridas
+- UC03 — Gerenciar Disciplinas.
 
-```text
-AuthController
-AuthService
-LoginRequest
-LoginResponse
-UsuarioLogadoResponse
-JwtService
-JwtAuthenticationFilter
-SecurityConfig
-```
+### Funcionalidades
 
-### Endpoints
+- cadastrar disciplina;
+- consultar disciplinas;
+- editar disciplina;
+- desativar disciplina;
+- visualizar detalhes da disciplina.
 
-| Método | Rota | Descrição | Acesso |
-|---|---|---|---|
-| POST | `/api/auth/login` | Realizar login | Público |
-| GET | `/api/auth/me` | Retornar usuário logado | Autenticado |
-| POST | `/api/auth/logout` | Encerrar sessão | Autenticado |
-
-### Regras
-
-- [ ] O login deve validar e-mail e senha.
-- [ ] A senha deve ser comparada com BCrypt.
-- [ ] O token JWT deve conter id, e-mail e perfil do usuário.
-- [ ] Usuários inativos não podem acessar o sistema.
-- [ ] Rotas internas devem exigir autenticação.
-- [ ] Rotas administrativas devem exigir perfil `ADMINISTRADOR`.
-
-### Entrega esperada
-
-Login funcionando no Postman/Insomnia e retornando JWT válido.
-
----
-
-## Etapa 4 — Gestão de usuários
-
-Objetivo: permitir que o administrador gerencie usuários.
-
-### Pacote
+### Entidade principal
 
 ```text
-usuario/
-├── controller/
-├── dto/
-├── model/
-├── repository/
-└── service/
+Disciplina
 ```
 
-### Endpoints
-
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/usuarios` | Cadastrar usuário | Administrador |
-| GET | `/api/usuarios` | Listar usuários | Administrador |
-| GET | `/api/usuarios/{id}` | Buscar usuário por ID | Administrador |
-| PUT | `/api/usuarios/{id}` | Atualizar usuário | Administrador |
-| PATCH | `/api/usuarios/{id}/desativar` | Desativar usuário | Administrador |
-| PATCH | `/api/usuarios/{id}/ativar` | Ativar usuário | Administrador |
-
-### Regras
-
-- [ ] E-mail deve ser único.
-- [ ] Senha deve ser criptografada.
-- [ ] Perfil deve ser obrigatório.
-- [ ] Usuário não deve ser excluído fisicamente; usar desativação lógica.
-- [ ] Apenas administrador pode gerenciar usuários.
-
-### Entrega esperada
-
-CRUD de usuários funcional e protegido por perfil.
-
----
-
-## Etapa 5 — Gestão de disciplinas
-
-Objetivo: permitir cadastro e manutenção de disciplinas.
-
-### Pacote
-
-```text
-academico/disciplina/
-```
-
-### Entidade Disciplina
-
-Campos mínimos:
+### Campos sugeridos
 
 ```text
 id
@@ -426,593 +286,843 @@ ementa
 ativa
 ```
 
-### Endpoints
+### Entregas esperadas
 
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/disciplinas` | Cadastrar disciplina | Administrador |
-| GET | `/api/disciplinas` | Listar disciplinas | Administrador/Docente |
-| GET | `/api/disciplinas/{id}` | Buscar disciplina | Administrador/Docente |
-| PUT | `/api/disciplinas/{id}` | Atualizar disciplina | Administrador |
-| PATCH | `/api/disciplinas/{id}/desativar` | Desativar disciplina | Administrador |
-
-### Regras
-
-- [ ] Código da disciplina deve ser único.
-- [ ] Carga horária deve ser positiva.
-- [ ] Disciplina inativa não deve ser usada em novas turmas.
-
-### Entrega esperada
-
-CRUD de disciplinas funcional.
+```text
+[ ] CRUD de disciplinas no backend
+[ ] Telas de disciplinas no frontend
+[ ] Validação de código/nome
+[ ] Listagem para uso em turmas
+```
 
 ---
 
-## Etapa 6 — Gestão de turmas
+## 5.4 Módulo de Turmas
 
-Objetivo: permitir criação de turmas vinculadas a disciplina, período letivo e docente.
+### Objetivo
 
-### Pacote
+Permitir a criação e acompanhamento das turmas vinculadas a disciplinas e docentes.
+
+### Casos de uso relacionados
+
+- UC04 — Gerenciar Turmas.
+
+### Funcionalidades
+
+- cadastrar turma;
+- consultar turmas;
+- editar turma;
+- desativar turma;
+- vincular disciplina;
+- vincular docente;
+- permitir que docente consulte suas turmas.
+
+### Entidades principais
 
 ```text
-academico/turma/
+Turma
+Disciplina
+Docente
+PeriodoLetivo
 ```
 
-### Entidade Turma
+### Regras principais
 
-Campos mínimos:
+- Toda turma deve estar vinculada a uma disciplina.
+- Toda turma deve possuir pelo menos um docente responsável.
+- Turmas devem estar associadas a um período letivo.
+
+### Entregas esperadas
 
 ```text
-id
-codigo
-disciplina
-docenteResponsavel
-ano
-semestre
-ativa
+[ ] CRUD de turmas no backend
+[ ] Telas de turmas no frontend
+[ ] Vínculo com disciplina
+[ ] Vínculo com docente
+[ ] Consulta de turmas do docente
 ```
-
-### Endpoints
-
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/turmas` | Cadastrar turma | Administrador |
-| GET | `/api/turmas` | Listar turmas | Administrador |
-| GET | `/api/turmas/{id}` | Buscar turma | Administrador/Docente |
-| PUT | `/api/turmas/{id}` | Atualizar turma | Administrador |
-| PATCH | `/api/turmas/{id}/desativar` | Desativar turma | Administrador |
-| GET | `/api/turmas/minhas` | Listar turmas do docente logado | Docente |
-
-### Regras
-
-- [ ] Toda turma deve estar vinculada a uma disciplina.
-- [ ] Toda turma deve possuir docente responsável.
-- [ ] Docente só pode consultar turmas às quais está vinculado.
-- [ ] Disciplina inativa não pode receber nova turma.
-
-### Entrega esperada
-
-Turmas cadastradas e vinculadas corretamente a docentes e disciplinas.
 
 ---
 
-## Etapa 7 — Matrículas
+## 5.5 Módulo de Matrículas
 
-Objetivo: permitir matrícula de discentes em turmas.
+### Objetivo
 
-### Pacote
+Permitir que o administrador matricule discentes em turmas.
 
-```text
-academico/matricula/
-```
+### Casos de uso relacionados
 
-### Entidade Matricula
+- UC05 — Matricular Discente em Turma.
 
-Campos mínimos:
+### Funcionalidades
 
-```text
-id
-discente
-turma
-status
-dataMatricula
-```
+- matricular discente;
+- consultar matrículas;
+- cancelar matrícula;
+- listar discentes por turma;
+- listar turmas de um discente.
 
-### Status sugeridos
+### Entidades principais
 
 ```text
-ATIVA
-CANCELADA
-CONCLUIDA
+Matricula
+Discente
+Turma
+PeriodoLetivo
 ```
 
-### Endpoints
+### Regras principais
 
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/matriculas` | Matricular discente | Administrador |
-| GET | `/api/matriculas` | Listar matrículas | Administrador |
-| GET | `/api/matriculas/turma/{turmaId}` | Listar matrículas da turma | Administrador/Docente |
-| GET | `/api/matriculas/discente/{discenteId}` | Listar matrículas do discente | Administrador/Discente |
-| PATCH | `/api/matriculas/{id}/cancelar` | Cancelar matrícula | Administrador |
+- Um discente não pode ser matriculado duas vezes na mesma turma.
+- A matrícula deve estar vinculada a uma turma válida.
+- A matrícula deve estar vinculada a um discente ativo.
+- O cancelamento não deve apagar o histórico acadêmico.
 
-### Regras
+### Entregas esperadas
 
-- [ ] Um discente não pode ser matriculado duas vezes na mesma turma.
-- [ ] Apenas usuário com perfil `DISCENTE` pode ser matriculado.
-- [ ] Turma inativa não pode receber matrícula.
-- [ ] Docente só pode consultar matrículas das próprias turmas.
-- [ ] Discente só pode consultar suas próprias matrículas.
-
-### Entrega esperada
-
-Matrícula funcional com validação de duplicidade e controle de acesso.
+```text
+[ ] Endpoint de matrícula
+[ ] Tela para matricular discente
+[ ] Validação de matrícula duplicada
+[ ] Consulta de matriculados por turma
+[ ] Consulta de turmas por discente
+```
 
 ---
 
-## Etapa 8 — Notas
+## 5.6 Módulo de Notas
 
-Objetivo: permitir que docentes registrem e atualizem notas.
+### Objetivo
 
-### Pacote
+Permitir que docentes registrem e atualizem notas dos discentes nas turmas sob sua responsabilidade.
 
-```text
-academico/nota/
-```
+### Casos de uso relacionados
 
-### Entidades
+- UC06 — Registrar Notas;
+- UC10 — Consultar Desempenho Acadêmico.
+
+### Funcionalidades
+
+- cadastrar avaliação;
+- registrar nota;
+- atualizar nota;
+- consultar notas por turma;
+- consultar notas por discente;
+- calcular média, se definido pelo grupo.
+
+### Entidades principais
 
 ```text
 Avaliacao
 Nota
+Matricula
+Turma
+Docente
+Discente
 ```
 
-### Avaliacao — campos mínimos
+### Regras principais
+
+- Somente o docente responsável pela turma pode lançar ou alterar notas.
+- O discente só pode consultar suas próprias notas.
+- O administrador pode consultar dados para fins de relatório.
+- Notas devem estar associadas a uma matrícula e a uma avaliação.
+
+### Entregas esperadas
 
 ```text
-id
-turma
-nome
-data
-peso
-```
-
-### Nota — campos mínimos
-
-```text
-id
-matricula
-avaliacao
-valor
-```
-
-### Endpoints
-
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/avaliacoes` | Criar avaliação | Docente |
-| GET | `/api/avaliacoes/turma/{turmaId}` | Listar avaliações da turma | Docente |
-| POST | `/api/notas` | Registrar nota | Docente |
-| PUT | `/api/notas/{id}` | Atualizar nota | Docente |
-| GET | `/api/notas/matricula/{matriculaId}` | Consultar notas por matrícula | Administrador/Docente/Discente |
-| GET | `/api/notas/minhas` | Consultar minhas notas | Discente |
-
-### Regras
-
-- [ ] Somente docente vinculado à turma pode lançar ou alterar notas.
-- [ ] Nota deve estar associada a uma matrícula válida.
-- [ ] Nota deve estar associada a uma avaliação válida.
-- [ ] Valor da nota deve respeitar faixa definida pelo sistema.
-- [ ] Discente só pode consultar as próprias notas.
-
-### Entrega esperada
-
-Registro de notas funcional com proteção por vínculo docente-turma.
-
----
-
-## Etapa 9 — Frequência
-
-Objetivo: permitir registro e consulta de frequência.
-
-### Pacote
-
-```text
-academico/frequencia/
-```
-
-### Entidade Frequencia
-
-Campos mínimos:
-
-```text
-id
-matricula
-dataAula
-presente
-quantidadeAulas
-```
-
-### Endpoints
-
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/frequencias` | Registrar frequência | Docente |
-| PUT | `/api/frequencias/{id}` | Atualizar frequência | Docente |
-| GET | `/api/frequencias/matricula/{matriculaId}` | Consultar frequência da matrícula | Administrador/Docente/Discente |
-| GET | `/api/frequencias/minhas` | Consultar minha frequência | Discente |
-
-### Regras
-
-- [ ] Somente docente vinculado à turma pode registrar frequência.
-- [ ] Frequência deve estar associada a matrícula ativa.
-- [ ] Discente só pode consultar a própria frequência.
-- [ ] Percentual de frequência deve ser calculado com base nas presenças e carga horária.
-- [ ] Frequência inferior a 75% indica reprovação por falta.
-
-### Entrega esperada
-
-Registro e cálculo básico de frequência funcionando.
-
----
-
-## Etapa 10 — AVA: materiais didáticos
-
-Objetivo: permitir que docentes disponibilizem materiais para suas turmas.
-
-### Pacote
-
-```text
-ava/material/
-```
-
-### Entidade MaterialDidatico
-
-Campos mínimos:
-
-```text
-id
-turma
-titulo
-descricao
-urlArquivoOuLink
-dataPublicacao
-ativo
-```
-
-### Endpoints
-
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/materiais` | Cadastrar material | Docente |
-| GET | `/api/materiais/turma/{turmaId}` | Listar materiais da turma | Docente/Discente |
-| PUT | `/api/materiais/{id}` | Atualizar material | Docente |
-| PATCH | `/api/materiais/{id}/desativar` | Desativar material | Docente |
-
-### Regras
-
-- [ ] Docente só pode cadastrar material em turma vinculada a ele.
-- [ ] Discente só pode visualizar materiais das turmas em que está matriculado.
-- [ ] O primeiro MVP pode usar links de arquivos em vez de upload real.
-
-### Entrega esperada
-
-Materiais didáticos disponíveis por turma.
-
----
-
-## Etapa 11 — AVA: atividades e entregas
-
-Objetivo: permitir cadastro de atividades e envio de entregas pelos discentes.
-
-### Pacotes
-
-```text
-ava/atividade/
-ava/entrega/
-```
-
-### Entidade Atividade
-
-Campos mínimos:
-
-```text
-id
-turma
-titulo
-descricao
-dataAbertura
-dataLimite
-ativa
-```
-
-### Entidade EntregaAtividade
-
-Campos mínimos:
-
-```text
-id
-atividade
-discente
-textoResposta
-urlArquivoOuLink
-dataEntrega
-status
-```
-
-### Endpoints
-
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| POST | `/api/atividades` | Cadastrar atividade | Docente |
-| GET | `/api/atividades/turma/{turmaId}` | Listar atividades da turma | Docente/Discente |
-| PUT | `/api/atividades/{id}` | Atualizar atividade | Docente |
-| POST | `/api/entregas` | Enviar atividade | Discente |
-| GET | `/api/entregas/atividade/{atividadeId}` | Listar entregas da atividade | Docente |
-| GET | `/api/entregas/minhas` | Listar minhas entregas | Discente |
-
-### Regras
-
-- [ ] Docente só pode criar atividade em turma vinculada a ele.
-- [ ] Discente só pode enviar atividade de turma em que está matriculado.
-- [ ] Sistema deve registrar data e hora da entrega.
-- [ ] Entrega após prazo deve ser marcada como atrasada ou recusada, conforme regra definida pelo grupo.
-
-### Entrega esperada
-
-Atividades e entregas funcionando no backend.
-
----
-
-## Etapa 12 — Relatórios acadêmicos
-
-Objetivo: consolidar dados acadêmicos para consulta administrativa.
-
-### Pacote
-
-```text
-relatorio/
-```
-
-### DTOs sugeridos
-
-```text
-BoletimDTO
-DiarioClasseDTO
-RelatorioTurmaDTO
-RelatorioFrequenciaDTO
-RelatorioNotasDTO
-```
-
-### Endpoints
-
-| Método | Rota | Descrição | Perfil |
-|---|---|---|---|
-| GET | `/api/relatorios/boletim/{discenteId}` | Gerar boletim do discente | Administrador |
-| GET | `/api/relatorios/turma/{turmaId}` | Gerar relatório da turma | Administrador |
-| GET | `/api/relatorios/diario-classe/{turmaId}` | Gerar diário de classe | Administrador/Docente |
-| GET | `/api/relatorios/frequencia/{turmaId}` | Gerar relatório de frequência | Administrador |
-| GET | `/api/relatorios/notas/{turmaId}` | Gerar relatório de notas | Administrador |
-
-### Regras
-
-- [ ] Relatórios devem consultar dados já existentes.
-- [ ] Não começar relatórios antes de matrícula, nota e frequência estarem funcionando.
-- [ ] Primeiro gerar resposta JSON.
-- [ ] Exportação PDF pode ser incremento posterior.
-
-### Entrega esperada
-
-Relatórios principais disponíveis em JSON para integração com frontend.
-
----
-
-# 9. Etapas do frontend
-
-O frontend deve começar após o backend ter, no mínimo, login, usuários, disciplinas, turmas e matrículas em funcionamento.
-
-## Etapa Frontend 1 — Setup
-
-- [ ] Criar projeto React.
-- [ ] Configurar TypeScript.
-- [ ] Configurar rotas.
-- [ ] Configurar Axios.
-- [ ] Criar layout base.
-- [ ] Criar menu por perfil.
-
-## Etapa Frontend 2 — Autenticação
-
-- [ ] Tela de login.
-- [ ] Armazenamento do token.
-- [ ] Rota protegida.
-- [ ] Logout.
-- [ ] Redirecionamento por perfil.
-
-## Etapa Frontend 3 — Telas administrativas
-
-- [ ] Painel do administrador.
-- [ ] Gerenciamento de usuários.
-- [ ] Gerenciamento de disciplinas.
-- [ ] Gerenciamento de turmas.
-- [ ] Matrícula de discentes.
-- [ ] Relatórios.
-
-## Etapa Frontend 4 — Telas do docente
-
-- [ ] Painel do docente.
-- [ ] Minhas turmas.
-- [ ] Registro de notas.
-- [ ] Registro de frequência.
-- [ ] Materiais didáticos.
-- [ ] Atividades.
-- [ ] Entregas recebidas.
-
-## Etapa Frontend 5 — Telas do discente
-
-- [ ] Painel do discente.
-- [ ] Minhas turmas.
-- [ ] Minhas notas.
-- [ ] Minha frequência.
-- [ ] Materiais disponíveis.
-- [ ] Atividades disponíveis.
-- [ ] Envio de atividade.
-
----
-
-# 10. Critérios de pronto por funcionalidade
-
-Uma funcionalidade só deve ser considerada pronta quando cumprir todos os itens abaixo:
-
-```text
-[ ] Endpoint implementado
-[ ] Service implementado
-[ ] Repository implementado
-[ ] DTOs criados
-[ ] Validações implementadas
-[ ] Controle de acesso aplicado
-[ ] Tratamento de erro implementado
-[ ] Testado no Postman/Insomnia
-[ ] Registrado no README da API
-[ ] Revisado por outro membro
-[ ] Merge realizado na branch develop
-```
-
-Para telas frontend, usar:
-
-```text
-[ ] Tela criada
-[ ] Integração com API realizada
-[ ] Validação de formulário implementada
-[ ] Tratamento de erro exibido ao usuário
-[ ] Teste manual realizado
-[ ] Print salvo em docs/prints
-[ ] Revisão feita por outro membro
+[ ] Cadastro de avaliações
+[ ] Registro de notas
+[ ] Tela docente para lançamento de notas
+[ ] Tela discente para consulta de notas
+[ ] Validação de vínculo entre docente e turma
 ```
 
 ---
 
-# 11. Padrão de branches
+## 5.7 Módulo de Frequência
 
-Sugestão:
+### Objetivo
+
+Permitir que docentes registrem frequência dos discentes e que discentes consultem sua situação.
+
+### Casos de uso relacionados
+
+- UC07 — Registrar Frequência;
+- UC10 — Consultar Desempenho Acadêmico.
+
+### Funcionalidades
+
+- registrar presença/falta;
+- atualizar frequência;
+- consultar frequência por turma;
+- consultar frequência por discente;
+- calcular percentual de frequência.
+
+### Entidades principais
 
 ```text
-main        → versão estável
- develop    → versão em desenvolvimento
- feature/*  → novas funcionalidades
- fix/*      → correções
- docs/*     → documentação
+Frequencia
+Matricula
+Turma
+Discente
+Docente
 ```
 
-Exemplos:
+### Regras principais
+
+- Somente o docente responsável pela turma pode registrar frequência.
+- O discente só pode consultar sua própria frequência.
+- O percentual de frequência deve considerar presenças e carga horária total.
+- Caso o percentual seja inferior ao mínimo definido, o sistema pode indicar reprovação por falta.
+
+### Entregas esperadas
 
 ```text
-feature/auth-login
-feature/crud-usuarios
-feature/crud-disciplinas
-feature/matriculas
-feature/notas
-feature/frequencia
-feature/ava-atividades
-fix/validacao-matricula-duplicada
-docs/api-endpoints
+[ ] Registro de frequência no backend
+[ ] Tela docente para frequência
+[ ] Tela discente para consulta
+[ ] Cálculo percentual de frequência
+[ ] Validação de vínculo entre docente e turma
 ```
 
 ---
 
-# 12. Padrão de commits
+## 5.8 Módulo de Materiais Didáticos
 
-Sugestão:
+### Objetivo
+
+Permitir que docentes disponibilizem materiais didáticos para suas turmas.
+
+### Casos de uso relacionados
+
+- UC08 — Gerenciar Materiais Didáticos.
+
+### Funcionalidades
+
+- cadastrar material;
+- listar materiais por turma;
+- editar material;
+- remover ou desativar material;
+- permitir acesso do discente aos materiais de suas turmas.
+
+### Entidades principais
 
 ```text
-feat: adiciona login com JWT
-feat: cria CRUD de usuários
-feat: implementa matrícula de discente
-fix: corrige validação de e-mail único
-docs: atualiza endpoints de autenticação
-test: adiciona testes manuais de login
-refactor: organiza services do módulo acadêmico
+MaterialDidatico
+Turma
+Docente
+```
+
+### Regras principais
+
+- Docente só pode cadastrar material em turma vinculada a ele.
+- Discente só pode acessar materiais das turmas em que está matriculado.
+- O material pode ser inicialmente um link ou referência a arquivo.
+
+### Entregas esperadas
+
+```text
+[ ] CRUD de materiais no backend
+[ ] Tela docente para cadastrar material
+[ ] Tela discente para acessar material
+[ ] Validação de vínculo com turma
 ```
 
 ---
 
-# 13. Divisão sugerida da equipe
+## 5.9 Módulo de Atividades
 
-| Membro | Responsabilidade principal |
+### Objetivo
+
+Permitir que docentes cadastrem atividades e acompanhem entregas dos discentes.
+
+### Casos de uso relacionados
+
+- UC09 — Gerenciar Atividades;
+- UC11 — Enviar Atividade.
+
+### Funcionalidades
+
+- cadastrar atividade;
+- editar atividade;
+- listar atividades por turma;
+- definir prazo de entrega;
+- permitir envio de atividade pelo discente;
+- listar entregas por atividade;
+- consultar entregas do discente.
+
+### Entidades principais
+
+```text
+Atividade
+EntregaAtividade
+Turma
+Docente
+Discente
+```
+
+### Regras principais
+
+- Docente só pode cadastrar atividade em turma vinculada a ele.
+- Discente só pode enviar atividade de turma em que está matriculado.
+- O sistema deve registrar data e hora da entrega.
+- O sistema deve tratar entrega fora do prazo, se essa regra for implementada.
+
+### Entregas esperadas
+
+```text
+[ ] Cadastro de atividades
+[ ] Tela docente de atividades
+[ ] Tela discente de atividades
+[ ] Envio de atividade
+[ ] Consulta de entregas
+```
+
+---
+
+## 5.10 Módulo de Desempenho Acadêmico
+
+### Objetivo
+
+Permitir que o discente consulte sua situação acadêmica de forma centralizada.
+
+### Casos de uso relacionados
+
+- UC10 — Consultar Desempenho Acadêmico.
+
+### Funcionalidades
+
+- consultar disciplinas/turmas matriculadas;
+- consultar notas;
+- consultar frequência;
+- consultar média;
+- consultar situação final, se disponível.
+
+### Regras principais
+
+- Discente só pode visualizar seus próprios dados.
+- Dados de notas e frequência são sensíveis e devem respeitar controle de acesso.
+
+### Entregas esperadas
+
+```text
+[ ] Endpoint de desempenho acadêmico
+[ ] Tela de desempenho do discente
+[ ] Integração com notas
+[ ] Integração com frequência
+[ ] Validação de privacidade
+```
+
+---
+
+## 5.11 Módulo de Relatórios
+
+### Objetivo
+
+Permitir a emissão de relatórios acadêmicos para acompanhamento administrativo.
+
+### Casos de uso relacionados
+
+- UC12 — Gerar Relatórios Acadêmicos.
+
+### Funcionalidades
+
+- gerar boletim;
+- gerar diário de classe;
+- gerar relatório de turma;
+- gerar relatório de frequência;
+- gerar relatório de notas.
+
+### Perfis envolvidos
+
+| Perfil | Permissão |
 |---|---|
-| Pessoa 1 | Tech Lead, arquitetura, revisão geral, integração backend/banco |
-| Pessoa 2 | Auth, segurança e usuários |
-| Pessoa 3 | Disciplinas, turmas e matrículas |
-| Pessoa 4 | Notas, frequência e regras acadêmicas |
-| Pessoa 5 | AVA, atividades, entregas e relatórios |
-| Pessoa 6 | Testes, documentação, frontend inicial e apoio na integração |
+| Administrador | Pode gerar relatórios acadêmicos |
+| Docente | Pode consultar relatórios das próprias turmas, se definido pelo grupo |
+| Discente | Pode consultar apenas seu próprio desempenho |
 
-Observação: mesmo com divisão de tarefas, todos devem participar de revisão cruzada de código para evitar concentração de conhecimento.
+### Entregas esperadas
 
----
+```text
+[ ] Relatório de turma
+[ ] Relatório de notas
+[ ] Relatório de frequência
+[ ] Boletim do discente
+[ ] Tela de relatórios
+```
 
-# 14. Ordem de entrega recomendada
-
-## Entrega 1 — Backend mínimo funcional
-
-- [ ] Projeto Spring Boot criado.
-- [ ] PostgreSQL conectado.
-- [ ] Usuário administrador inicial criado.
-- [ ] Login funcionando.
-- [ ] JWT funcionando.
-- [ ] `/api/auth/me` funcionando.
-
-## Entrega 2 — Administração básica
-
-- [ ] CRUD de usuários.
-- [ ] CRUD de disciplinas.
-- [ ] CRUD de turmas.
-- [ ] Controle por perfil aplicado.
-
-## Entrega 3 — Núcleo acadêmico
-
-- [ ] Matrícula de discente em turma.
-- [ ] Validação de matrícula duplicada.
-- [ ] Docente visualiza suas turmas.
-- [ ] Discente visualiza suas matrículas.
-
-## Entrega 4 — Notas e frequência
-
-- [ ] Docente registra notas.
-- [ ] Docente registra frequência.
-- [ ] Discente consulta notas.
-- [ ] Discente consulta frequência.
-- [ ] Cálculo de frequência implementado.
-
-## Entrega 5 — AVA
-
-- [ ] Docente cadastra material.
-- [ ] Discente consulta material.
-- [ ] Docente cadastra atividade.
-- [ ] Discente envia atividade.
-- [ ] Docente consulta entregas.
-
-## Entrega 6 — Relatórios
-
-- [ ] Boletim.
-- [ ] Diário de classe.
-- [ ] Relatório por turma.
-- [ ] Relatório de frequência.
-- [ ] Relatório de notas.
-
-## Entrega 7 — Integração e apresentação
-
-- [ ] Frontend integrado.
-- [ ] Testes manuais concluídos.
-- [ ] Prints salvos.
-- [ ] README atualizado.
-- [ ] Dados de demonstração cadastrados.
-- [ ] Roteiro de apresentação definido.
+Observação: a primeira versão pode gerar relatórios em tela. Exportação em PDF pode ser tratada como melhoria se houver tempo.
 
 ---
 
-# 15. Roteiro de demonstração final
+## 6. Estrutura sugerida do repositório
 
-A demonstração final deve seguir um fluxo que mostre os principais casos de uso:
+```text
+sge/
+├── backend/
+│   ├── src/
+│   ├── pom.xml
+│   └── README.md
+│
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── README.md
+│
+├── database/
+│   ├── migrations/
+│   ├── seed.sql
+│   └── README.md
+│
+├── docs/
+│   ├── requisitos/
+│   ├── arquitetura/
+│   ├── api/
+│   ├── testes/
+│   ├── prints/
+│   └── apresentacao/
+│
+└── README.md
+```
+
+---
+
+## 7. Estrutura sugerida do backend
+
+```text
+backend/src/main/java/br/ufs/sge/
+├── auth/
+├── usuario/
+├── academico/
+│   ├── disciplina/
+│   ├── turma/
+│   ├── matricula/
+│   ├── nota/
+│   └── frequencia/
+├── ava/
+│   ├── material/
+│   ├── atividade/
+│   └── entrega/
+├── relatorio/
+├── shared/
+│   ├── exception/
+│   ├── dto/
+│   └── validation/
+└── config/
+```
+
+Cada módulo deve seguir o padrão:
+
+```text
+Controller → Service → Repository → Banco de Dados
+```
+
+### Responsabilidades
+
+| Camada | Responsabilidade |
+|---|---|
+| Controller | Receber requisições e devolver respostas |
+| Service | Aplicar regras de negócio |
+| Repository | Acessar o banco de dados |
+| Model/Entity | Representar entidades persistentes |
+| DTO | Transportar dados entre API e cliente |
+| Exception | Tratar erros de forma padronizada |
+
+---
+
+## 8. Estrutura sugerida do frontend
+
+```text
+frontend/src/
+├── components/
+├── pages/
+│   ├── auth/
+│   ├── usuarios/
+│   ├── disciplinas/
+│   ├── turmas/
+│   ├── matriculas/
+│   ├── notas/
+│   ├── frequencias/
+│   ├── materiais/
+│   ├── atividades/
+│   ├── desempenho/
+│   └── relatorios/
+├── services/
+├── routes/
+├── contexts/
+├── hooks/
+├── styles/
+└── utils/
+```
+
+### Responsabilidades
+
+| Pasta | Responsabilidade |
+|---|---|
+| components | Componentes reutilizáveis |
+| pages | Telas principais do sistema |
+| services | Comunicação com a API |
+| routes | Rotas públicas e privadas |
+| contexts | Estado global, autenticação e usuário logado |
+| hooks | Lógicas reutilizáveis |
+| styles | Estilos globais e específicos |
+| utils | Funções auxiliares |
+
+---
+
+## 9. Banco de dados — entidades mínimas
+
+As entidades mínimas previstas para a primeira versão funcional são:
+
+```text
+Usuario
+Perfil
+Disciplina
+Turma
+PeriodoLetivo
+Matricula
+Avaliacao
+Nota
+Frequencia
+MaterialDidatico
+Atividade
+EntregaAtividade
+```
+
+### Relacionamentos principais
+
+```text
+Usuario possui um Perfil.
+Docente é um usuário com perfil DOCENTE.
+Discente é um usuário com perfil DISCENTE.
+Administrador é um usuário com perfil ADMINISTRADOR.
+Disciplina possui várias Turmas.
+Turma pertence a uma Disciplina.
+Turma possui um ou mais Docentes responsáveis.
+Discente realiza Matrícula em Turma.
+Matrícula liga Discente e Turma.
+Nota pertence a uma Matrícula e a uma Avaliação.
+Frequência pertence a uma Matrícula.
+Material Didático pertence a uma Turma.
+Atividade pertence a uma Turma.
+Entrega de Atividade pertence a uma Atividade e a um Discente.
+```
+
+---
+
+## 10. Ordem geral de desenvolvimento
+
+A ordem abaixo evita retrabalho e respeita as dependências entre módulos.
+
+### Etapa 1 — Preparação do projeto
+
+```text
+[ ] Criar repositório GitHub
+[ ] Criar estrutura de pastas
+[ ] Criar projeto backend
+[ ] Criar projeto frontend
+[ ] Configurar banco de dados
+[ ] Definir padrão de commits
+[ ] Definir branches
+[ ] Criar README inicial
+[ ] Criar quadro de tarefas
+```
+
+### Etapa 2 — Base visual e base técnica
+
+```text
+[ ] Layout inicial do frontend
+[ ] Menu lateral ou superior
+[ ] Página inicial por perfil
+[ ] Configuração da API no frontend
+[ ] Configuração de CORS no backend
+[ ] Tratamento global de erros
+[ ] Padronização de respostas da API
+```
+
+### Etapa 3 — Acesso e segurança
+
+```text
+[ ] Login
+[ ] Logout
+[ ] Usuário logado
+[ ] Controle de perfil
+[ ] Rotas privadas no frontend
+[ ] Endpoints protegidos no backend
+[ ] Seed com usuários de teste
+```
+
+### Etapa 4 — Usuários
+
+```text
+[ ] Cadastro de usuário
+[ ] Listagem de usuários
+[ ] Edição de usuário
+[ ] Desativação de usuário
+[ ] Filtro por perfil
+[ ] Validação de permissões
+```
+
+### Etapa 5 — Disciplinas
+
+```text
+[ ] Cadastro de disciplina
+[ ] Listagem de disciplinas
+[ ] Edição de disciplina
+[ ] Desativação de disciplina
+[ ] Validações básicas
+```
+
+### Etapa 6 — Turmas
+
+```text
+[ ] Cadastro de turma
+[ ] Listagem de turmas
+[ ] Edição de turma
+[ ] Vínculo com disciplina
+[ ] Vínculo com docente
+[ ] Consulta de turmas do docente
+```
+
+### Etapa 7 — Matrículas
+
+```text
+[ ] Matricular discente em turma
+[ ] Impedir matrícula duplicada
+[ ] Listar matriculados por turma
+[ ] Listar turmas do discente
+[ ] Cancelar matrícula
+```
+
+### Etapa 8 — Notas
+
+```text
+[ ] Criar avaliação
+[ ] Lançar nota
+[ ] Editar nota
+[ ] Consultar notas por turma
+[ ] Consultar notas do discente
+[ ] Calcular média, se definido
+```
+
+### Etapa 9 — Frequência
+
+```text
+[ ] Registrar presença/falta
+[ ] Editar frequência
+[ ] Consultar frequência por turma
+[ ] Consultar frequência do discente
+[ ] Calcular percentual de frequência
+```
+
+### Etapa 10 — Materiais didáticos
+
+```text
+[ ] Cadastrar material
+[ ] Listar materiais por turma
+[ ] Editar material
+[ ] Remover/desativar material
+[ ] Discente acessar materiais das próprias turmas
+```
+
+### Etapa 11 — Atividades e entregas
+
+```text
+[ ] Cadastrar atividade
+[ ] Listar atividades por turma
+[ ] Editar atividade
+[ ] Enviar atividade
+[ ] Consultar entregas
+[ ] Registrar data/hora de entrega
+```
+
+### Etapa 12 — Desempenho acadêmico
+
+```text
+[ ] Tela de desempenho do discente
+[ ] Consulta de notas
+[ ] Consulta de frequência
+[ ] Consulta de turmas/disciplinas
+[ ] Situação acadêmica resumida
+```
+
+### Etapa 13 — Relatórios
+
+```text
+[ ] Boletim
+[ ] Diário de classe
+[ ] Relatório de turma
+[ ] Relatório de notas
+[ ] Relatório de frequência
+```
+
+### Etapa 14 — Integração geral
+
+```text
+[ ] Integrar todas as telas com a API
+[ ] Verificar permissões por perfil
+[ ] Corrigir erros de navegação
+[ ] Corrigir erros de validação
+[ ] Revisar dados exibidos
+```
+
+### Etapa 15 — Testes
+
+```text
+[ ] Testar login
+[ ] Testar permissões
+[ ] Testar CRUDs
+[ ] Testar matrícula duplicada
+[ ] Testar lançamento de notas
+[ ] Testar registro de frequência
+[ ] Testar envio de atividade
+[ ] Testar relatórios
+[ ] Registrar evidências com prints
+```
+
+### Etapa 16 — Deploy e apresentação
+
+```text
+[ ] Preparar ambiente final
+[ ] Configurar variáveis de ambiente
+[ ] Criar dados de demonstração
+[ ] Atualizar README
+[ ] Registrar instruções de execução
+[ ] Preparar roteiro de apresentação
+[ ] Realizar ensaio da apresentação
+```
+
+---
+
+## 11. Divisão sugerida do grupo
+
+A equipe pode ser organizada por responsabilidade, sem impedir colaboração entre membros.
+
+| Papel | Responsabilidades |
+|---|---|
+| Coordenação/Integração | Organizar tarefas, revisar entregas, manter alinhamento com documentação |
+| Backend | API, regras de negócio, segurança, persistência e integração com banco |
+| Frontend | Telas, rotas, componentes, consumo da API e usabilidade |
+| Banco de Dados | Modelo físico, migrations, seeds, integridade e consultas |
+| QA/Testes | Testes funcionais, testes de integração, bugs e evidências |
+| Documentação/Apresentação | README, instruções de execução, prints, roteiro e material final |
+
+Observação: mesmo que cada pessoa tenha uma responsabilidade principal, todos devem revisar código e entender o fluxo geral do sistema para evitar dependência de uma única pessoa.
+
+---
+
+## 12. Fluxo de trabalho com Git
+
+### Branches sugeridas
+
+```text
+main
+└── develop
+    ├── feature/auth
+    ├── feature/usuarios
+    ├── feature/disciplinas
+    ├── feature/turmas
+    ├── feature/matriculas
+    ├── feature/notas
+    ├── feature/frequencia
+    ├── feature/ava
+    └── feature/relatorios
+```
+
+### Regras de uso
+
+```text
+[ ] Nunca desenvolver direto na main
+[ ] Criar branch para cada módulo ou tarefa
+[ ] Fazer commits pequenos e claros
+[ ] Abrir pull request antes de juntar na develop
+[ ] Revisar código antes de aceitar pull request
+[ ] Testar antes de fazer merge
+```
+
+### Padrão de commits sugerido
+
+```text
+feat: adiciona cadastro de usuários
+fix: corrige validação de login
+docs: atualiza README
+refactor: reorganiza service de matrícula
+test: adiciona testes de frequência
+style: ajusta layout da tela de turmas
+```
+
+---
+
+## 13. Critérios de pronto por funcionalidade
+
+Uma funcionalidade só deve ser considerada pronta quando cumprir todos os itens abaixo.
+
+```text
+[ ] Tela implementada, quando aplicável
+[ ] Endpoint implementado, quando aplicável
+[ ] Regra de negócio implementada no service
+[ ] Persistência funcionando
+[ ] Validações obrigatórias implementadas
+[ ] Controle de acesso por perfil aplicado
+[ ] Erros tratados de forma compreensível
+[ ] Teste manual realizado
+[ ] Evidência registrada com print ou descrição
+[ ] Código revisado por outro membro
+[ ] README ou documentação atualizada, se necessário
+```
+
+---
+
+## 14. Critérios de qualidade
+
+Durante o desenvolvimento, o grupo deve observar:
+
+### Segurança
+
+- senha com hash;
+- controle por perfil;
+- rotas protegidas;
+- endpoints protegidos;
+- discente não acessa dados de outro discente;
+- docente não altera dados de turma que não é sua.
+
+### Integridade
+
+- evitar matrícula duplicada;
+- validar vínculos entre turma, disciplina e docente;
+- validar vínculos entre matrícula, nota e frequência;
+- não apagar histórico acadêmico indevidamente.
+
+### Manutenibilidade
+
+- separar controller, service, repository e entity;
+- evitar regra de negócio no frontend;
+- evitar regra de negócio no controller;
+- manter nomes consistentes com a documentação;
+- padronizar DTOs e respostas.
+
+### Usabilidade
+
+- telas simples;
+- mensagens claras;
+- formulários objetivos;
+- navegação por perfil;
+- feedback visual para erros e sucessos.
+
+### Testabilidade
+
+- casos de uso testáveis;
+- dados de teste padronizados;
+- endpoints documentados;
+- prints de evidência;
+- roteiro de demonstração.
+
+---
+
+## 15. Roteiro recomendado de demonstração
+
+Para apresentar o sistema de forma coerente, o grupo pode seguir este roteiro:
 
 ```text
 1. Login como Administrador
@@ -1020,103 +1130,120 @@ A demonstração final deve seguir um fluxo que mostre os principais casos de us
 3. Cadastrar Discente
 4. Cadastrar Disciplina
 5. Cadastrar Turma
-6. Matricular Discente em Turma
-7. Login como Docente
-8. Consultar Minhas Turmas
-9. Registrar Nota
-10. Registrar Frequência
-11. Cadastrar Material Didático
-12. Cadastrar Atividade
-13. Login como Discente
-14. Consultar Notas
-15. Consultar Frequência
-16. Acessar Material
-17. Enviar Atividade
-18. Login como Administrador
-19. Gerar Relatório Acadêmico
+6. Vincular Docente à Turma
+7. Matricular Discente na Turma
+8. Login como Docente
+9. Consultar Minhas Turmas
+10. Registrar Nota
+11. Registrar Frequência
+12. Cadastrar Material Didático
+13. Cadastrar Atividade
+14. Login como Discente
+15. Consultar Notas
+16. Consultar Frequência
+17. Acessar Material
+18. Enviar Atividade
+19. Login como Administrador
+20. Gerar Relatório Acadêmico
 ```
 
----
-
-# 16. O que não deve ser priorizado agora
-
-Para evitar desvio de escopo, não priorizar no MVP:
-
-- aplicativo mobile;
-- chat interno;
-- fórum;
-- dashboard avançado;
-- microsserviços;
-- upload pesado de vídeo;
-- sistema financeiro;
-- notificações complexas;
-- integração real com e-mail antes do core funcionar;
-- exportação PDF antes dos relatórios JSON estarem prontos.
-
-Esses itens podem ficar como melhorias futuras.
+Esse fluxo demonstra os principais casos de uso e evidencia a integração entre frontend, backend, banco de dados e regras de acesso.
 
 ---
 
-# 17. Checklist geral do projeto
+## 16. Priorização para entrega mínima funcional
 
-## Backend
-
-- [ ] Projeto Spring Boot criado.
-- [ ] PostgreSQL configurado.
-- [ ] Flyway configurado.
-- [ ] Auth implementado.
-- [ ] JWT implementado.
-- [ ] Usuários implementados.
-- [ ] Disciplinas implementadas.
-- [ ] Turmas implementadas.
-- [ ] Matrículas implementadas.
-- [ ] Notas implementadas.
-- [ ] Frequência implementada.
-- [ ] Materiais implementados.
-- [ ] Atividades implementadas.
-- [ ] Entregas implementadas.
-- [ ] Relatórios implementados.
-- [ ] Documentação dos endpoints criada.
-
-## Frontend
-
-- [ ] Projeto React criado.
-- [ ] Rotas configuradas.
-- [ ] Login integrado.
-- [ ] Menu por perfil.
-- [ ] Telas do administrador.
-- [ ] Telas do docente.
-- [ ] Telas do discente.
-- [ ] Tratamento de erros.
-- [ ] Layout básico padronizado.
-
-## Testes e documentação
-
-- [ ] Testes manuais no Postman/Insomnia.
-- [ ] Testes de fluxo por perfil.
-- [ ] Testes de autorização.
-- [ ] Testes de matrícula duplicada.
-- [ ] Testes de nota por docente responsável.
-- [ ] Testes de consulta individual do discente.
-- [ ] Prints das telas.
-- [ ] README atualizado.
-- [ ] Roteiro de apresentação.
-
----
-
-# 18. Prioridade imediata do grupo
-
-A prioridade agora é concluir a primeira entrega do backend:
+Caso o prazo fique apertado, priorizar o seguinte MVP:
 
 ```text
-Backend subindo + PostgreSQL conectado + usuário administrador inicial + login com JWT.
+[ ] Login com perfis
+[ ] CRUD de usuários
+[ ] CRUD de disciplinas
+[ ] CRUD de turmas
+[ ] Matrícula de discente
+[ ] Registro de notas
+[ ] Registro de frequência
+[ ] Consulta de desempenho pelo discente
+[ ] Relatório simples de turma ou boletim
 ```
 
-Enquanto isso não estiver pronto, os demais módulos devem aguardar para evitar retrabalho.
+Funcionalidades que podem ficar como melhoria, se necessário:
+
+```text
+[ ] Recuperação de senha
+[ ] Exportação de relatório em PDF
+[ ] Upload real de arquivos
+[ ] Notificações
+[ ] Dashboard avançado
+[ ] Filtros complexos
+[ ] Histórico detalhado de alterações
+```
 
 ---
 
-# 19. Resumo executivo
+## 17. O que evitar durante o desenvolvimento
 
-O desenvolvimento do SGE deve começar pelo backend, seguindo arquitetura em camadas e organização modular. A primeira entrega deve garantir autenticação, autorização e base de usuários. Em seguida, o grupo deve implementar disciplinas, turmas, matrículas, notas, frequência, AVA e relatórios. Cada funcionalidade deve possuir endpoint, service, repository, validação, controle de acesso, teste manual e documentação no repositório.
+Para manter o projeto dentro do escopo, evitar:
 
+- criar funcionalidades não documentadas antes do core funcionar;
+- desenvolver microsserviços;
+- criar app mobile;
+- criar chat interno;
+- criar fórum complexo;
+- criar financeiro completo;
+- iniciar relatórios avançados antes de notas, frequência e matrícula;
+- misturar regra de negócio no frontend;
+- deixar endpoints sem controle de perfil;
+- usar dados reais na fase de teste.
+
+---
+
+## 18. Checklist final da entrega
+
+```text
+[ ] Sistema executa localmente
+[ ] Frontend executa sem erro
+[ ] Backend executa sem erro
+[ ] Banco conecta corretamente
+[ ] Usuários de teste disponíveis
+[ ] Login funcionando
+[ ] Perfis funcionando
+[ ] Casos de uso principais funcionando
+[ ] README atualizado
+[ ] Endpoints documentados
+[ ] Prints das telas principais salvos
+[ ] Testes manuais documentados
+[ ] Roteiro de apresentação pronto
+[ ] Grupo realizou ensaio da demonstração
+```
+
+---
+
+## 19. Resumo das etapas
+
+```text
+1. Preparar ambiente e repositório
+2. Implementar base técnica do frontend, backend e banco
+3. Implementar autenticação e perfis
+4. Implementar usuários
+5. Implementar disciplinas
+6. Implementar turmas
+7. Implementar matrículas
+8. Implementar notas
+9. Implementar frequência
+10. Implementar materiais didáticos
+11. Implementar atividades e entregas
+12. Implementar desempenho acadêmico
+13. Implementar relatórios
+14. Integrar frontend, backend e banco
+15. Testar casos de uso
+16. Corrigir bugs
+17. Documentar execução e evidências
+18. Preparar deploy e apresentação
+```
+
+---
+
+## 20. Observação final
+
+O grupo deve manter o desenvolvimento fiel à documentação. O objetivo não é criar o maior sistema possível, mas entregar um SGE coerente, funcional, rastreável e alinhado aos requisitos, casos de uso, arquitetura em camadas, controle de acesso por perfil e regras acadêmicas documentadas.
