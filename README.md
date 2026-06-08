@@ -191,12 +191,12 @@ Permitir que usuários acessem o sistema conforme seu perfil.
 ### Entregas esperadas
 
 ```text
-[ ] Tela de login
-[ ] Serviço de autenticação no backend
-[ ] Token ou sessão configurada
-[ ] Rotas protegidas no frontend
-[ ] Endpoints protegidos no backend
-[ ] Usuário administrador inicial para teste
+[x] Tela de login
+[x] Serviço de autenticação no backend
+[x] Token ou sessão configurada
+[x] Rotas protegidas no frontend
+[x] Endpoints protegidos no backend
+[x] Usuário administrador inicial para teste
 ```
 
 ---
