@@ -1,6 +1,6 @@
 package br.ufs.sge.usuario.model;
 
-public enum Perfil {
+public enum PerfilUsuario {
     ADMINISTRADOR,
     DOCENTE,
     DISCENTE
