@@ -1,6 +1,6 @@
 package br.ufs.sge.auth.dto;
 
-import br.ufs.sge.usuario.model.Perfil;
+import br.ufs.sge.usuario.model.PerfilUsuario;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +15,5 @@ public class LoginResponse {
     private Long id;
     private String nome;
     private String email;
-    private Perfil perfil;
+    private PerfilUsuario perfil;
 }

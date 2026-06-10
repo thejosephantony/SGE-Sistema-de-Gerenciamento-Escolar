@@ -1,6 +1,6 @@
 package br.ufs.sge;
 
-import br.ufs.sge.usuario.model.Perfil;
+import br.ufs.sge.usuario.model.PerfilUsuario;
 import br.ufs.sge.usuario.model.Usuario;
 import br.ufs.sge.usuario.repository.UsuarioRepository;
 import jakarta.annotation.PostConstruct;
@@ -28,7 +28,7 @@ public class BackendApplication {
         admin.setNome("Administrador");
         admin.setEmail("admin@sge.ufs.br");
         admin.setSenha(passwordEncoder.encode("admin123"));
-        admin.setPerfil(Perfil.ADMINISTRADOR);
+        admin.setPerfil(PerfilUsuario.ADMINISTRADOR);
         admin.setAtivo(true);
         usuarioRepository.save(admin);
         System.out.println("--- SENHA DO ADMIN ATUALIZADA COM SUCESSO (admin123) ---");
