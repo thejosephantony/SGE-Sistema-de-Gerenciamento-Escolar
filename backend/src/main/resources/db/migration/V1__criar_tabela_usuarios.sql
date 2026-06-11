@@ -7,3 +7,13 @@
  * Created: 11 de jun. de 2026
  */
 
+CREATE TABLE usuarios (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(120) NOT NULL,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    senha_hash VARCHAR(255) NOT NULL,
+    perfil VARCHAR(30) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ATIVO'
+);
+
+
