@@ -1,0 +1,1022 @@
+/* 
+========================================================================
+SGE — Landing Page Institucional (Estilo UFS)
+CSS Module - Scoped Styles
+========================================================================
+*/
+
+.landingPageContainer {
+  /* Variáveis Locais da Paleta UFS */
+  --cor-ufs-azul-escuro: hsl(215, 85%, 20%);
+  --cor-ufs-azul-medio: hsl(214, 85%, 34%);
+  --cor-ufs-azul-claro: hsl(212, 100%, 48%);
+  --cor-ufs-azul-suave: hsl(214, 85%, 95%);
+  
+  /* Cores Semânticas das Categorias */
+  --cor-categoria-verde: hsl(142, 76%, 36%);
+  --cor-categoria-roxo: hsl(262, 83%, 58%);
+  --cor-categoria-laranja: hsl(24, 95%, 53%);
+  
+  /* Cores Neutras */
+  --cor-fundo-branco: hsl(0, 0%, 100%);
+  --cor-fundo-cinza: hsl(210, 40%, 97%);
+  --cor-fundo-cinza-escuro: hsl(215, 28%, 12%);
+  --cor-texto-escuro: hsl(215, 28%, 17%);
+  --cor-texto-cinza: hsl(215, 16%, 47%);
+  --cor-borda-suave: hsl(214, 32%, 90%);
+
+  /* Transições e Efeitos */
+  --transicao-padrao: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --sombra-card: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --sombra-premium: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--cor-texto-escuro);
+  background-color: var(--cor-fundo-branco);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================================================
+   Barra Superior de Acessibilidade e Idiomas
+   ======================================================================== */
+.topAccessibilityBar {
+  background-color: var(--cor-ufs-azul-escuro);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px 0;
+  font-size: 0.8125rem;
+  width: 100%;
+}
+
+.topBarContainer {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.accessibilityControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.accessibilityControls button {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transicao-padrao);
+}
+
+.accessibilityControls button:hover {
+  background-color: white;
+  color: var(--cor-ufs-azul-escuro);
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Caixa de Busca */
+.searchBoxBar {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 2px 4px 2px 12px;
+  width: 220px;
+  transition: var(--transicao-padrao);
+}
+
+.searchBoxBar:focus-within {
+  width: 280px;
+  background-color: white;
+  border-color: white;
+}
+
+.searchBoxBar input {
+  background: none;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 0.8125rem;
+  width: 100%;
+  padding: 0; /* Reseta o padding global de inputs */
+}
+
+.searchBoxBar:focus-within input {
+  color: var(--cor-texto-escuro);
+}
+
+.searchBoxBar button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+}
+
+.searchBoxBar:focus-within button {
+  color: var(--cor-ufs-azul-medio);
+}
+
+/* Idiomas */
+.languageSelector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  transition: var(--transicao-padrao);
+}
+
+.languageSelector:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================================================
+   Cabeçalho Principal
+   ======================================================================== */
+.mainHeader {
+  background-color: var(--cor-ufs-azul-escuro);
+  color: white;
+  padding: 24px 0;
+  width: 100%;
+}
+
+.container,
+.headerContainer {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.headerLogoBrand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logoCircleContainer {
+  background-color: white;
+  color: var(--cor-ufs-azul-medio);
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandText h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: white;
+  line-height: 1.1;
+}
+
+.brandText h2 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 2px;
+}
+
+/* ========================================================================
+   Menu de Navegação Horizontal e Mega Dropdown
+   ======================================================================== */
+.navigationMenuBar {
+  background-color: var(--cor-ufs-azul-medio);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--sombra-card);
+  width: 100%;
+}
+
+.menuContainer {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navTabsList {
+  display: flex;
+  list-style: none;
+}
+
+.navTabItem {
+  position: relative;
+}
+
+.tabLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 18px 16px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  transition: var(--transicao-padrao);
+  border-bottom: 3px solid transparent;
+}
+
+.navTabItem:hover .tabLink {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.chevronMenu {
+  transition: transform 0.25s ease;
+}
+
+.navTabItem:hover .chevronMenu {
+  transform: rotate(180deg);
+}
+
+/* Mega Dropdown */
+.megaDropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  box-shadow: var(--sombra-premium);
+  border-radius: 0 0 12px 12px;
+  width: 580px;
+  padding: 30px;
+  border-top: 4px solid var(--cor-ufs-azul-claro);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(15px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  z-index: 10;
+}
+
+.navTabItem:hover .megaDropdownMenu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.dropdownColumns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px;
+}
+
+.dropdownCol h3 {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--cor-ufs-azul-medio);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--cor-borda-suave);
+  padding-bottom: 6px;
+}
+
+.dropdownCol ul {
+  list-style: none;
+}
+
+.dropdownCol ul li {
+  margin-bottom: 8px;
+}
+
+.dropdownCol ul li a {
+  font-size: 0.8125rem;
+  color: var(--cor-texto-cinza);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transicao-padrao);
+  display: block;
+}
+
+.dropdownCol ul li a:hover {
+  color: var(--cor-ufs-azul-claro);
+  transform: translateX(3px);
+}
+
+/* Botão de Login */
+.navLoginBtn {
+  background-color: white;
+  color: var(--cor-ufs-azul-medio);
+  border: none;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: var(--transicao-padrao);
+}
+
+.navLoginBtn:hover {
+  background-color: var(--cor-ufs-azul-suave);
+  color: var(--cor-ufs-azul-escuro);
+  transform: translateY(-1px);
+}
+
+/* ========================================================================
+   Carrossel de Banners Principal
+   ======================================================================== */
+.heroCarouselSection {
+  padding: 30px 0;
+  background-color: var(--cor-fundo-cinza);
+  width: 100%;
+}
+
+.carouselContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 16px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--sombra-premium);
+}
+
+.carouselTrack {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.carouselSlide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  display: flex;
+  align-items: flex-end;
+  padding: 60px;
+  z-index: 1;
+}
+
+.carouselSlide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slideContentCard {
+  max-width: 680px;
+  color: white;
+}
+
+.slideBadge {
+  background-color: var(--cor-ufs-azul-claro);
+  color: white;
+  font-weight: 800;
+  font-size: 0.6875rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.slideContentCard h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.slideContentCard p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+.carouselDots {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: var(--transicao-padrao);
+}
+
+.dot.active, .dot:hover {
+  background-color: white;
+  width: 24px;
+  border-radius: 5px;
+}
+
+/* ========================================================================
+   Seção de Bento Grid Acadêmico
+   ======================================================================== */
+.academicBentoSection {
+  padding: 40px 0;
+  background-color: var(--cor-fundo-branco);
+  width: 100%;
+}
+
+.academicTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--cor-ufs-azul-escuro);
+  margin-bottom: 20px;
+  border-left: 5px solid var(--cor-ufs-azul-claro);
+  padding-left: 12px;
+}
+
+.academicGridEnsino {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.bentoCardBlue {
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  padding: 30px 24px;
+  color: white;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--sombra-card);
+  transition: var(--transicao-padrao);
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.bentoCardBlue:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-premium);
+}
+
+.bentoCardBlue h3 {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: white;
+}
+
+.bentoCardBlue p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.8125rem;
+  margin: 10px 0;
+}
+
+.bentoCardBlue span {
+  color: white;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.academicTrioGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.trioCard {
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  padding: 36px 30px;
+  color: white;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--sombra-card);
+  transition: var(--transicao-padrao);
+  text-decoration: none;
+}
+
+.trioCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-premium);
+}
+
+.trioCard h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: white;
+}
+
+.trioCard p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  margin: 12px 0;
+}
+
+.trioCard span {
+  color: white;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.cardGreen {
+  /* Controlado pelo JSX inline para o background-image, mas as cores do fallback ficam aqui */
+  background-color: var(--cor-categoria-verde);
+}
+
+.cardPurple {
+  background-color: var(--cor-categoria-roxo);
+}
+
+.cardOrange {
+  background-color: var(--cor-categoria-laranja);
+}
+
+/* ========================================================================
+   Seção de Notícias
+   ======================================================================== */
+.newsListSection {
+  padding: 50px 0;
+  background-color: var(--cor-fundo-cinza);
+  width: 100%;
+}
+
+.sectionTitleHeader {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--cor-ufs-azul-escuro);
+  margin-bottom: 24px;
+  border-left: 5px solid var(--cor-ufs-azul-claro);
+  padding-left: 12px;
+}
+
+.newsLayoutGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+/* Notícia Esquerda Destaque */
+.newsMainCard {
+  background-color: var(--cor-fundo-branco);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--sombra-card);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transicao-padrao);
+  text-decoration: none;
+}
+
+.newsMainCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-premium);
+}
+
+.newsMainImage {
+  height: 280px;
+  background-size: cover;
+  background-position: center;
+}
+
+.newsMainContent {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.newsMetaTag {
+  color: var(--cor-ufs-azul-claro);
+  font-weight: 800;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.newsMainContent h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--cor-ufs-azul-escuro);
+  line-height: 1.3;
+}
+
+.newsMainContent p {
+  font-size: 0.875rem;
+  color: var(--cor-texto-cinza);
+}
+
+.newsDate {
+  font-size: 0.6875rem;
+  color: var(--cor-texto-cinza);
+  margin-top: 8px;
+}
+
+/* Coluna Direita */
+.newsSecondaryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.newsBlueGradientCard {
+  background: linear-gradient(135deg, var(--cor-ufs-azul-escuro) 0%, var(--cor-ufs-azul-medio) 100%);
+  border-radius: 12px;
+  padding: 24px;
+  color: white;
+  box-shadow: var(--sombra-card);
+  transition: var(--transicao-padrao);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.newsBlueGradientCard:hover {
+  box-shadow: var(--sombra-premium);
+  transform: translateY(-2px);
+}
+
+.newsBlueGradientCard .newsMetaTag {
+  color: hsl(212, 100%, 65%);
+}
+
+.newsBlueGradientCard h3 {
+  font-size: 1.1rem;
+  color: white;
+}
+
+.newsBlueGradientCard p {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.newsBlueGradientCard .newsDate {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Linha com duas notícias */
+.newsTrioRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.newsRowCard {
+  background-color: var(--cor-fundo-branco);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--sombra-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: var(--transicao-padrao);
+  text-decoration: none;
+}
+
+.newsRowCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-premium);
+}
+
+.newsCardThumb {
+  height: 100px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 6px;
+}
+
+.newsRowCard h4 {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--cor-ufs-azul-escuro);
+}
+
+/* ========================================================================
+   Seção de Serviços Online Escolares
+   ======================================================================== */
+.schoolServicesSection {
+  padding: 40px 0;
+  background-color: var(--cor-fundo-branco);
+  width: 100%;
+}
+
+.servicesContainerCard {
+  background-color: var(--cor-fundo-cinza);
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid var(--cor-borda-suave);
+}
+
+.servicesContainerCard h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--cor-ufs-azul-escuro);
+  margin-bottom: 24px;
+}
+
+.servicesGridLayout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.serviceItemBtn {
+  background-color: var(--cor-ufs-azul-medio);
+  color: white;
+  text-decoration: none;
+  padding: 24px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--sombra-card);
+  transition: var(--transicao-padrao);
+}
+
+.serviceItemBtn:hover {
+  background-color: var(--cor-ufs-azul-escuro);
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-premium);
+}
+
+.serviceText span {
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+}
+
+.serviceIcon {
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+}
+
+.serviceItemBtn:hover .serviceIcon {
+  opacity: 1;
+  transform: scale(1.1);
+  transition: var(--transicao-padrao);
+}
+
+/* ========================================================================
+   Rodapé Institucional
+   ======================================================================== */
+.institutionalFooter {
+  background-color: var(--cor-fundo-cinza-escuro);
+  color: white;
+  padding: 60px 0;
+  border-top: 5px solid var(--cor-ufs-azul-medio);
+  width: 100%;
+}
+
+.footerContainer {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footerBrandInfo {
+  flex: 1.5;
+  min-width: 320px;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.footerLogo h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: white;
+}
+
+.footerBrandInfo p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  max-width: 440px;
+}
+
+.footerBrandInfo .copyright {
+  margin-top: 24px;
+  font-size: 0.75rem;
+}
+
+.footerLinksGrid {
+  flex: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
+}
+
+.footerLinksCol h4 {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 16px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  display: inline-block;
+}
+
+.footerLinksCol p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.footerLinksCol ul {
+  list-style: none;
+}
+
+.footerLinksCol ul li {
+  margin-bottom: 10px;
+}
+
+.footerLinksCol ul li a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: var(--transicao-padrao);
+}
+
+.footerLinksCol ul li a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+/* ========================================================================
+   Estilos de Alto Contraste (Acessibilidade) - Integração Global
+   ======================================================================== */
+
+:global(body.contrast-active) {
+  background-color: black !important;
+  color: #ffff00 !important;
+}
+
+:global(body.contrast-active) :not(svg):not(path) {
+  background-color: black !important;
+  color: #ffff00 !important;
+  border-color: #ffff00 !important;
+  box-shadow: none !important;
+}
+
+:global(body.contrast-active) svg,
+:global(body.contrast-active) path {
+  stroke: #ffff00 !important;
+  fill: none !important;
+}
+
+:global(body.contrast-active) a {
+  color: #ffff00 !important;
+  text-decoration: underline !important;
+}
+
+:global(body.contrast-active) a:hover {
+  color: white !important;
+}
+
+:global(body.contrast-active) button,
+:global(body.contrast-active) .serviceItemBtn,
+:global(body.contrast-active) .navLoginBtn,
+:global(body.contrast-active) .bentoCardBlue,
+:global(body.contrast-active) .trioCard,
+:global(body.contrast-active) .newsBlueGradientCard {
+  border: 2px solid #ffff00 !important;
+  background-color: black !important;
+}
+
+/* ========================================================================
+   Responsividade Geral
+   ======================================================================== */
+@media (max-width: 1024px) {
+  .newsLayoutGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .carouselContainer {
+    height: 400px;
+  }
+  
+  .slideContentCard h2 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .topBarContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .topBarRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .searchBoxBar {
+    width: 100%;
+    max-width: 260px;
+  }
+  
+  .menuContainer {
+    padding: 10px 20px;
+  }
+  
+  .navTabsList {
+    display: none; /* Em responsivo, simplificamos ocultando a barra superior */
+  }
+  
+  .navLoginBtn {
+    width: 100%;
+  }
+  
+  .carouselContainer {
+    height: 320px;
+  }
+  
+  .carouselSlide {
+    padding: 30px;
+  }
+  
+  .slideContentCard h2 {
+    font-size: 1.35rem;
+  }
+  
+  .slideContentCard p {
+    font-size: 0.875rem;
+  }
+  
+  .newsTrioRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .footerContainer {
+    flex-direction: column;
+  }
+}
