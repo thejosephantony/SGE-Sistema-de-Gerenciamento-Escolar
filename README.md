@@ -1,281 +1,703 @@
-# SGE — Plano Geral de Desenvolvimento do Software
+# SGE — Sistema de Gerenciamento Escolar
 
-Este documento organiza as etapas de desenvolvimento do **Sistema de Gerenciamento Escolar (SGE)** para orientar o trabalho do grupo durante a implementação. O objetivo é manter o desenvolvimento alinhado à documentação de requisitos, análise, design, arquitetura e plano de projeto.
+O **SGE — Sistema de Gerenciamento Escolar** é uma aplicação web desenvolvida como projeto acadêmico de Engenharia de Software. O sistema tem como objetivo apoiar processos administrativos e acadêmicos de uma instituição de ensino, incluindo autenticação de usuários, controle de acesso por perfil, gerenciamento de usuários, disciplinas, turmas, matrículas, notas, frequência, AVA e relatórios.
 
-O SGE será desenvolvido como uma **aplicação web centralizada**, acessada por navegador, com separação entre **frontend**, **backend**, **banco de dados** e **documentação/testes**. A arquitetura deve preservar a organização em camadas, o controle de acesso por perfil e a rastreabilidade entre requisitos, casos de uso, modelos e implementação.
-
----
-
-## 1. Objetivo do desenvolvimento
-
-Desenvolver uma versão funcional do SGE capaz de apoiar processos acadêmicos e administrativos de uma instituição de ensino, contemplando:
-
-- autenticação de usuários;
-- controle de acesso por perfil;
-- gerenciamento de usuários;
-- gerenciamento de disciplinas;
-- gerenciamento de turmas;
-- matrícula de discentes;
-- registro de notas;
-- registro de frequência;
-- disponibilização de materiais didáticos;
-- gerenciamento de atividades;
-- envio de atividades por discentes;
-- consulta de desempenho acadêmico;
-- geração de relatórios acadêmicos.
+O desenvolvimento está sendo conduzido de forma incremental, com integração gradual entre backend, frontend e banco de dados.
 
 ---
 
-## 2. Escopo geral do sistema
+## 1. Status Atual do Projeto
 
-O sistema deve atender três perfis principais:
+### Concluído em versão inicial
 
-### Administrador
+- [x] Estrutura inicial do repositório
+- [x] Backend Spring Boot
+- [x] Frontend React + TypeScript
+- [x] Banco PostgreSQL
+- [x] Flyway para versionamento do banco
+- [x] Migration inicial da tabela `usuarios`
+- [x] CRUD inicial de usuários no backend
+- [x] Criptografia de senha com BCrypt
+- [x] Autenticação com JWT
+- [x] Filtro JWT para proteger rotas
+- [x] Endpoint de login
+- [x] Endpoint de usuário autenticado
+- [x] Rotas protegidas por token no backend
+- [x] Código enviado para a branch `main`
 
-Responsável pela organização estrutural do sistema.
+### Próximo módulo recomendado
 
-Principais funções:
-
-- gerenciar usuários;
-- gerenciar disciplinas;
-- gerenciar turmas;
-- matricular discentes;
-- consultar dados acadêmicos autorizados;
-- gerar relatórios acadêmicos.
-
-### Docente
-
-Responsável pelo acompanhamento das turmas às quais estiver vinculado.
-
-Principais funções:
-
-- consultar suas turmas;
-- registrar notas;
-- registrar frequência;
-- disponibilizar materiais didáticos;
-- cadastrar atividades;
-- acompanhar entregas dos discentes.
-
-### Discente
-
-Responsável por consultar suas informações acadêmicas e interagir com os recursos disponibilizados pelo docente.
-
-Principais funções:
-
-- consultar notas;
-- consultar frequência;
-- consultar disciplinas e turmas;
-- acessar materiais didáticos;
-- enviar atividades;
-- consultar desempenho acadêmico.
+```text
+Módulo 5.3 — Integração do Login no Frontend
+```
 
 ---
 
-## 3. Arquitetura geral da solução
+## 2. Tecnologias Utilizadas
 
-A solução deve seguir uma arquitetura em camadas, organizada como uma aplicação web modular.
+### Backend
 
-### Camadas principais
+- Java 21
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- Spring Security
+- JWT
+- Bean Validation
+- Maven
+- Lombok
+- Flyway
+- PostgreSQL Driver
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- React Router
+- CSS Modules
+- Fetch API ou Axios
+- Framer Motion
+- Tabler Icons
+
+### Banco de Dados
+
+- PostgreSQL
+- Migrations com Flyway
+
+### Ferramentas de Apoio
+
+- Git
+- GitHub
+- PowerShell
+- Postman, Insomnia ou PowerShell para testes HTTP
+- VS Code, IntelliJ ou NetBeans
+
+---
+
+## 3. Estrutura do Repositório
+
+```text
+SGE-Sistema-de-Gerenciamento-Escolar/
+├── backend/
+│   ├── src/
+│   ├── pom.xml
+│   └── mvnw.cmd
+│
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── database/
+│
+├── docs/
+│
+└── README.md
+```
+
+---
+
+## 4. Arquitetura Geral
+
+A solução segue uma arquitetura em camadas:
 
 ```text
 Frontend Web
     ↓
-Backend API
+Backend API REST
     ↓
-Camada de Aplicação / Serviços
+Controllers
     ↓
-Camada de Domínio
+Services
     ↓
-Camada de Persistência
+Repositories
     ↓
-Banco de Dados
+Banco de Dados PostgreSQL
 ```
 
-### Separação esperada
+### Responsabilidades
 
-```text
-sge/
-├── frontend/
-├── backend/
-├── database/
-├── docs/
-└── README.md
-```
-
-### Responsabilidade de cada parte
-
-| Parte | Responsabilidade |
+| Camada | Responsabilidade |
 |---|---|
-| Frontend | Telas, navegação, formulários, consumo da API e experiência do usuário |
-| Backend | Regras de negócio, autenticação, autorização, API REST e integração com banco |
-| Banco de dados | Persistência, integridade, relacionamentos e dados acadêmicos |
-| Documentação | Registro de decisões, endpoints, testes, instruções de execução e evidências |
-| Testes | Validação funcional, integração entre módulos e conferência dos casos de uso |
+| Frontend | Telas, rotas, formulários, navegação e consumo da API |
+| Controller | Receber requisições HTTP e devolver respostas |
+| Service | Aplicar regras de negócio |
+| Repository | Acessar o banco de dados |
+| Model/Entity | Representar entidades persistentes |
+| DTO | Transportar dados entre API e cliente |
+| Security | Autenticação, JWT, autorização e proteção de rotas |
+| Banco | Persistência, integridade e relacionamentos |
 
 ---
 
-## 4. Tecnologias recomendadas
+## 5. Perfis do Sistema
 
-### Frontend
+O sistema trabalha com três perfis principais:
 
-- React;
-- JavaScript ou TypeScript;
-- HTML;
-- CSS;
-- Axios ou Fetch API;
-- React Router;
-- biblioteca de componentes, se o grupo decidir usar.
+| Perfil | Função |
+|---|---|
+| `ADMINISTRADOR` | Gerencia usuários, disciplinas, turmas, matrículas e relatórios |
+| `DOCENTE` | Consulta turmas, registra notas, frequência, materiais e atividades |
+| `DISCENTE` | Consulta notas, frequência, materiais, atividades e desempenho acadêmico |
+
+---
+
+## 6. Como Executar o Projeto
+
+### 6.1 Pré-requisitos
+
+Antes de executar o projeto, instale:
+
+- Java 21 ou superior
+- Maven ou Maven Wrapper
+- Node.js
+- PostgreSQL
+- Git
+
+### 6.2 Configuração do Banco de Dados
+
+Crie um banco PostgreSQL chamado:
+
+```text
+sge
+```
+
+Exemplo no PostgreSQL:
+
+```sql
+CREATE DATABASE sge;
+```
+
+### 6.3 Variáveis de Ambiente
+
+O backend usa variáveis de ambiente para não expor dados sensíveis no repositório.
+
+No PowerShell:
+
+```powershell
+$env:DB_PASSWORD="sua_senha_do_postgres"
+$env:JWT_SECRET="uma-chave-local-secreta-com-mais-de-32-caracteres"
+```
+
+O arquivo `application.properties` deve usar as variáveis:
+
+```properties
+spring.application.name=sge
+
+server.port=8080
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/sge
+spring.datasource.username=postgres
+spring.datasource.password=${DB_PASSWORD}
+
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.flyway.enabled=true
+
+sge.jwt.secret=${JWT_SECRET:chave-de-desenvolvimento-do-sge-com-mais-de-32-caracteres}
+sge.jwt.expiration-ms=86400000
+```
+
+### 6.4 Executar o Backend
+
+Na raiz do projeto:
+
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+O backend será executado em:
+
+```text
+http://localhost:8080
+```
+
+Observação: algumas rotas exigem token JWT. Portanto, acessar diretamente pelo navegador pode retornar acesso negado.
+
+### 6.5 Executar o Frontend
+
+Em outro terminal:
+
+```powershell
+cd frontend
+npm install
+npm.cmd run dev
+```
+
+O frontend será executado em:
+
+```text
+http://localhost:5173
+```
+
+---
+
+# 7. Módulos do Projeto
+
+O desenvolvimento está dividido em módulos. Cada módulo deve seguir o fluxo:
+
+```text
+Backend → Teste da API → Frontend → Integração → Teste final do módulo
+```
+
+---
+
+## 7.1 Módulo 1 — Estrutura Inicial do Projeto
+
+### Objetivo
+
+Preparar a base do projeto para desenvolvimento em equipe.
 
 ### Backend
 
-- Java;
-- Spring Boot;
-- Spring Web;
-- Spring Data JPA;
-- Spring Security;
-- JWT;
-- Bean Validation;
-- Maven;
-- Lombok, se o grupo decidir usar.
+- [x] Criar projeto Spring Boot
+- [x] Configurar Maven
+- [x] Configurar estrutura inicial de pacotes
 
-### Banco de dados
+### Frontend
 
-- PostgreSQL;
-- migrations com Flyway ou Liquibase;
-- dados iniciais de teste com seed.
+- [x] Criar projeto React com TypeScript
+- [x] Configurar Vite
+- [x] Criar estrutura inicial de páginas e componentes
 
-### Ferramentas de apoio
+### Repositório
 
-- Git e GitHub;
-- Postman ou Insomnia;
-- Figma, se houver protótipo;
-- Docker, se o grupo decidir padronizar ambiente;
-- Trello, GitHub Projects ou outra ferramenta de organização.
+- [x] Criar repositório no GitHub
+- [x] Criar pastas `backend`, `frontend`, `database` e `docs`
+- [x] Criar README inicial
+- [x] Configurar `.gitignore`
 
----
+### Integração
 
-## 5. Módulos funcionais do SGE
+Ainda não havia integração funcional nesta etapa.
 
-O desenvolvimento deve ser dividido em módulos. Cada módulo deve possuir telas, endpoints, regras de negócio, persistência e testes correspondentes.
+### Status
+
+```text
+Concluído
+```
 
 ---
 
-## 5.1 Módulo de Acesso e Segurança
+## 7.2 Módulo 2 — Banco de Dados e Persistência
 
 ### Objetivo
 
-Permitir que usuários acessem o sistema conforme seu perfil.
+Configurar PostgreSQL e versionamento do banco com Flyway.
 
-### Casos de uso relacionados
+### Backend
 
-- UC01 — Realizar Login.
+- [x] Adicionar PostgreSQL Driver
+- [x] Adicionar Flyway
+- [x] Configurar conexão com o banco
+- [x] Configurar `ddl-auto=validate`
 
-### Funcionalidades
+### Banco de Dados
 
-- login;
-- logout;
-- identificação do usuário autenticado;
-- controle de acesso por perfil;
-- recuperação de senha, se houver tempo;
-- proteção de rotas no frontend;
-- proteção de endpoints no backend.
+- [x] Criar banco `sge`
+- [x] Criar pasta `db/migration`
+- [x] Criar `V1__criar_tabela_usuarios.sql`
+- [x] Criar tabela `usuarios`
 
-### Regras principais
+### Teste
 
-- Usuário precisa estar cadastrado para acessar o sistema.
-- O sistema deve validar as credenciais.
-- O sistema deve identificar o perfil do usuário.
-- Cada perfil deve acessar apenas suas funcionalidades permitidas.
-- Senhas não devem ser armazenadas em texto puro.
+- [x] Rodar backend
+- [x] Validar conexão com PostgreSQL
+- [x] Validar execução do Flyway
 
-### Entregas esperadas
+### Status
 
 ```text
-[ ] Tela de login
-[ ] Serviço de autenticação no backend
-[ ] Token ou sessão configurada
-[ ] Rotas protegidas no frontend
-[ ] Endpoints protegidos no backend
-[ ] Usuário administrador inicial para teste
+Concluído
 ```
 
 ---
 
-## 5.2 Módulo de Usuários
+## 7.3 Módulo 3 — Frontend Inicial e Telas Base
 
 ### Objetivo
 
-Permitir ao administrador gerenciar os usuários do sistema.
+Criar a base visual do sistema.
 
-### Casos de uso relacionados
+### Frontend
 
-- UC02 — Gerenciar Usuários.
+- [x] Criar Landing Page
+- [x] Criar tela inicial de login
+- [x] Criar layout do Administrador
+- [x] Criar layout do Professor
+- [x] Criar layout do Aluno
+- [x] Criar rotas iniciais
+- [x] Criar menus por perfil
 
-### Funcionalidades
+### Integração
 
-- cadastrar usuário;
-- consultar usuários;
-- editar usuário;
-- desativar usuário;
-- reativar usuário, se necessário;
-- filtrar usuários por perfil;
-- visualizar detalhes de usuário.
+As telas ainda são protótipos navegáveis. A integração real começa no módulo 5.3.
 
-### Perfis envolvidos
-
-| Perfil | Permissão |
-|---|---|
-| Administrador | Gerencia usuários |
-| Docente | Não gerencia usuários |
-| Discente | Não gerencia usuários |
-
-### Entidades principais
+### Status
 
 ```text
-Usuario
-Perfil
-Administrador
-Docente
-Discente
-```
-
-### Entregas esperadas
-
-```text
-[ ] CRUD de usuários no backend
-[ ] Telas de cadastro/listagem/edição no frontend
-[ ] Validação de campos obrigatórios
-[ ] Controle de perfil
-[ ] Desativação lógica de usuário
+Concluído em versão inicial
 ```
 
 ---
 
-## 5.3 Módulo de Disciplinas
+## 7.4 Módulo 4 — Segurança Inicial
 
 ### Objetivo
 
-Permitir o gerenciamento das disciplinas da instituição.
+Preparar o backend para autenticação e proteção de rotas.
 
-### Casos de uso relacionados
+### Backend
 
-- UC03 — Gerenciar Disciplinas.
+- [x] Adicionar Spring Security
+- [x] Criar `SecurityConfig`
+- [x] Criar `PasswordEncoder`
+- [x] Usar BCrypt para senhas
+- [x] Ajustar segurança para JWT
+
+### Integração
+
+A integração com a tela de login será feita no módulo 5.3.
+
+### Status
+
+```text
+Concluído em versão inicial
+```
+
+---
+
+# 8. Módulo 5 — Usuários e Autenticação
+
+O módulo 5 é dividido em quatro partes:
+
+```text
+5.1 — Backend de Usuários
+5.2 — Backend de Autenticação/Login com JWT
+5.3 — Integração do Login no Frontend
+5.4 — Integração da Tela de Usuários
+```
+
+---
+
+## 8.1 Módulo 5.1 — Backend de Usuários
+
+### Objetivo
+
+Implementar o CRUD inicial de usuários.
+
+### Backend
+
+- [x] Criar `Usuario.java`
+- [x] Criar `PerfilUsuario.java`
+- [x] Criar `StatusUsuario.java`
+- [x] Criar `UsuarioRepository.java`
+- [x] Criar `UsuarioRequest.java`
+- [x] Criar `UsuarioResponse.java`
+- [x] Criar `UsuarioService.java`
+- [x] Criar `UsuarioController.java`
+- [x] Criptografar senha com BCrypt
+- [x] Omitir senha nas respostas da API
+- [x] Cadastrar usuário
+- [x] Listar usuários
+- [x] Buscar usuário por ID
+- [x] Atualizar usuário
+- [x] Desativar usuário
+- [x] Reativar usuário
+
+### Endpoints implementados
+
+```text
+POST   /api/usuarios
+GET    /api/usuarios
+GET    /api/usuarios/{id}
+PUT    /api/usuarios/{id}
+PATCH  /api/usuarios/{id}/desativar
+PATCH  /api/usuarios/{id}/ativar
+```
+
+### Testes da API
+
+- [x] Testar cadastro de usuário
+- [x] Testar listagem de usuários
+- [x] Testar retorno sem senha
+- [x] Testar senha criptografada
+- [x] Testar status `ATIVO`
+
+### Frontend
+
+Ainda não integrado. A integração será feita no módulo 5.4.
+
+### Status
+
+```text
+Concluído em versão inicial
+```
+
+### Melhorias futuras
+
+- [ ] Criar tratamento global de exceções
+- [ ] Retornar `409 Conflict` para e-mail duplicado
+- [ ] Retornar `404 Not Found` para usuário inexistente
+- [ ] Criar testes automatizados
+- [ ] Restringir gerenciamento de usuários ao perfil `ADMINISTRADOR`
+
+---
+
+## 8.2 Módulo 5.2 — Backend de Autenticação/Login com JWT
+
+### Objetivo
+
+Implementar login real no backend usando e-mail, senha criptografada e token JWT.
+
+### Backend
+
+- [x] Adicionar dependências JJWT no `pom.xml`
+- [x] Criar `LoginRequest.java`
+- [x] Criar `LoginResponse.java`
+- [x] Criar `AuthService.java`
+- [x] Criar `AuthController.java`
+- [x] Criar `JwtService.java`
+- [x] Criar `JwtAuthenticationFilter.java`
+- [x] Ajustar `SecurityConfig.java`
+- [x] Validar senha com BCrypt
+- [x] Gerar token JWT
+- [x] Validar token JWT
+- [x] Proteger rotas com token
+
+### Endpoints implementados
+
+```text
+POST /api/auth/login
+GET  /api/auth/me
+```
+
+### Testes da API
+
+- [x] Login com e-mail e senha corretos
+- [x] Retorno de `token`
+- [x] Retorno de `tipo = Bearer`
+- [x] Retorno de dados do usuário autenticado
+- [x] Acesso a `/api/auth/me` com token
+- [x] Bloqueio de rota protegida sem token
+- [x] Acesso a rota protegida com token
+
+### Frontend
+
+Ainda não integrado. A integração será feita no módulo 5.3.
+
+### Status
+
+```text
+Concluído em versão inicial
+```
+
+### Melhorias futuras
+
+- [ ] Padronizar erro de login inválido
+- [ ] Retornar `401 Unauthorized` de forma padronizada
+- [ ] Retornar `403 Forbidden` quando o perfil não tiver permissão
+- [ ] Criar controle de acesso por perfil em endpoints específicos
+
+---
+
+## 8.3 Módulo 5.3 — Integração do Login no Frontend
+
+### Objetivo
+
+Fazer a tela de login do React consumir o endpoint real de autenticação do backend.
+
+### Dependências
+
+- [x] Módulo 5.1 — Usuários
+- [x] Módulo 5.2 — Autenticação/Login com JWT
+
+### Backend usado
+
+```text
+POST /api/auth/login
+GET  /api/auth/me
+```
+
+### Frontend
+
+Criar ou ajustar:
+
+```text
+frontend/src/services/api.ts
+frontend/src/services/authService.ts
+frontend/src/contexts/AuthContext.tsx
+frontend/src/pages/auth/LoginPage.tsx
+```
+
+### Tarefas
+
+- [ ] Criar serviço base da API
+- [ ] Criar serviço de autenticação
+- [ ] Fazer login enviar e-mail e senha para o backend
+- [ ] Receber token JWT
+- [ ] Salvar token
+- [ ] Salvar dados do usuário autenticado
+- [ ] Redirecionar conforme perfil
+- [ ] Criar logout funcional
+- [ ] Persistir login ao atualizar a página
+- [ ] Usar `/api/auth/me` para validar sessão
+- [ ] Proteger rotas no frontend
+
+### Redirecionamento por perfil
+
+```text
+ADMINISTRADOR → /admin
+DOCENTE       → /professor
+DISCENTE      → /aluno
+```
+
+### Integração
+
+- [ ] Frontend envia `POST /api/auth/login`
+- [ ] Backend retorna token e usuário
+- [ ] Frontend salva token
+- [ ] Frontend envia token em requisições futuras
+- [ ] Frontend identifica perfil
+- [ ] Frontend redireciona para layout correto
+
+### Testes
+
+- [ ] Login como Administrador
+- [ ] Login com senha errada
+- [ ] Redirecionamento para `/admin`
+- [ ] Persistência após atualizar página
+- [ ] Logout
+- [ ] Acesso sem token
+- [ ] Acesso com token inválido ou expirado
+
+### Status
+
+```text
+Próximo módulo recomendado
+```
+
+---
+
+## 8.4 Módulo 5.4 — Integração da Tela de Usuários
+
+### Objetivo
+
+Conectar a tela de usuários do frontend com o CRUD de usuários do backend.
+
+### Dependências
+
+- [x] Módulo 5.1 — Backend de Usuários
+- [x] Módulo 5.2 — Autenticação com JWT
+- [ ] Módulo 5.3 — Login integrado no frontend
+
+### Backend usado
+
+```text
+GET    /api/usuarios
+GET    /api/usuarios/{id}
+POST   /api/usuarios
+PUT    /api/usuarios/{id}
+PATCH  /api/usuarios/{id}/desativar
+PATCH  /api/usuarios/{id}/ativar
+```
+
+### Frontend
+
+Criar ou ajustar:
+
+```text
+frontend/src/services/usuarioService.ts
+frontend/src/pages/admin/usuarios/ListaUsuarios.tsx
+frontend/src/pages/admin/usuarios/FormularioUsuario.tsx
+```
 
 ### Funcionalidades
 
-- cadastrar disciplina;
-- consultar disciplinas;
-- editar disciplina;
-- desativar disciplina;
-- visualizar detalhes da disciplina.
+- [ ] Listar usuários
+- [ ] Cadastrar usuário
+- [ ] Editar usuário
+- [ ] Desativar usuário
+- [ ] Reativar usuário
+- [ ] Exibir mensagens de erro
+- [ ] Exibir mensagens de sucesso
+- [ ] Atualizar tabela após ações
 
-### Entidade principal
+### Campos do formulário
+
+- [ ] Nome
+- [ ] E-mail
+- [ ] Senha
+- [ ] Perfil
+
+### Integração
+
+- [ ] Usar token JWT no header `Authorization`
+- [ ] Consumir `GET /api/usuarios`
+- [ ] Consumir `POST /api/usuarios`
+- [ ] Consumir `PUT /api/usuarios/{id}`
+- [ ] Consumir `PATCH /api/usuarios/{id}/desativar`
+- [ ] Consumir `PATCH /api/usuarios/{id}/ativar`
+
+### Regras de acesso
+
+Inicialmente:
+
+- [ ] Usuário autenticado acessa
+
+Depois:
+
+- [ ] Apenas `ADMINISTRADOR` gerencia usuários
+
+### Testes
+
+- [ ] Login como administrador
+- [ ] Acessar tela de usuários
+- [ ] Listar usuários
+- [ ] Cadastrar usuário
+- [ ] Editar usuário
+- [ ] Desativar usuário
+- [ ] Reativar usuário
+- [ ] Testar erro de e-mail duplicado
+
+### Status
 
 ```text
-Disciplina
+Ainda não iniciado
 ```
 
-### Campos sugeridos
+---
+
+# 9. Módulo 6 — Gestão Acadêmica Base
+
+O módulo 6 contém as funcionalidades acadêmicas principais.
+
+---
+
+## 9.1 Módulo 6.1 — Disciplinas
+
+### Objetivo
+
+Permitir cadastro, consulta e manutenção de disciplinas.
+
+### Backend
+
+Criar:
+
+```text
+Disciplina.java
+DisciplinaRepository.java
+DisciplinaRequest.java
+DisciplinaResponse.java
+DisciplinaService.java
+DisciplinaController.java
+```
+
+Campos previstos:
 
 ```text
 id
@@ -283,967 +705,781 @@ nome
 codigo
 cargaHoraria
 ementa
-ativa
+status
 ```
 
-### Entregas esperadas
+### Banco
+
+Criar migration:
 
 ```text
-[ ] CRUD de disciplinas no backend
-[ ] Telas de disciplinas no frontend
-[ ] Validação de código/nome
-[ ] Listagem para uso em turmas
+V2__criar_tabela_disciplinas.sql
+```
+
+### Endpoints previstos
+
+```text
+POST   /api/disciplinas
+GET    /api/disciplinas
+GET    /api/disciplinas/{id}
+PUT    /api/disciplinas/{id}
+PATCH  /api/disciplinas/{id}/desativar
+PATCH  /api/disciplinas/{id}/ativar
+```
+
+### Testes da API
+
+- [ ] Cadastrar disciplina
+- [ ] Listar disciplinas
+- [ ] Buscar disciplina por ID
+- [ ] Atualizar disciplina
+- [ ] Desativar disciplina
+- [ ] Reativar disciplina
+- [ ] Testar código duplicado
+
+### Frontend
+
+Criar:
+
+```text
+frontend/src/services/disciplinaService.ts
+frontend/src/pages/admin/disciplinas/ListaDisciplinas.tsx
+frontend/src/pages/admin/disciplinas/FormularioDisciplina.tsx
+```
+
+### Integração
+
+- [ ] Login como administrador
+- [ ] Acessar menu Disciplinas
+- [ ] Listar disciplinas vindas do backend
+- [ ] Cadastrar disciplina pelo frontend
+- [ ] Editar disciplina pelo frontend
+- [ ] Desativar e reativar disciplina pelo frontend
+- [ ] Exibir mensagens de sucesso e erro
+
+### Regras de acesso
+
+- [ ] Administrador gerencia disciplinas
+- [ ] Docente pode consultar disciplinas relacionadas
+- [ ] Discente pode consultar disciplinas relacionadas às suas turmas
+
+### Status
+
+```text
+Ainda não iniciado
 ```
 
 ---
 
-## 5.4 Módulo de Turmas
+## 9.2 Módulo 6.2 — Turmas
 
 ### Objetivo
 
-Permitir a criação e acompanhamento das turmas vinculadas a disciplinas e docentes.
+Gerenciar turmas vinculadas a disciplinas e docentes.
 
-### Casos de uso relacionados
+### Backend
 
-- UC04 — Gerenciar Turmas.
-
-### Funcionalidades
-
-- cadastrar turma;
-- consultar turmas;
-- editar turma;
-- desativar turma;
-- vincular disciplina;
-- vincular docente;
-- permitir que docente consulte suas turmas.
-
-### Entidades principais
+Criar:
 
 ```text
-Turma
-Disciplina
-Docente
-PeriodoLetivo
+Turma.java
+TurmaRepository.java
+TurmaRequest.java
+TurmaResponse.java
+TurmaService.java
+TurmaController.java
 ```
 
-### Regras principais
-
-- Toda turma deve estar vinculada a uma disciplina.
-- Toda turma deve possuir pelo menos um docente responsável.
-- Turmas devem estar associadas a um período letivo.
-
-### Entregas esperadas
+Campos previstos:
 
 ```text
-[ ] CRUD de turmas no backend
-[ ] Telas de turmas no frontend
-[ ] Vínculo com disciplina
-[ ] Vínculo com docente
-[ ] Consulta de turmas do docente
+id
+disciplina
+docente
+ano
+semestre
+codigo
+status
+```
+
+### Banco
+
+Criar migration:
+
+```text
+V3__criar_tabela_turmas.sql
+```
+
+Relacionamentos:
+
+```text
+turmas.disciplina_id → disciplinas.id
+turmas.docente_id    → usuarios.id
+```
+
+### Endpoints previstos
+
+```text
+POST   /api/turmas
+GET    /api/turmas
+GET    /api/turmas/{id}
+GET    /api/turmas/docente/{docenteId}
+GET    /api/turmas/disciplina/{disciplinaId}
+PUT    /api/turmas/{id}
+PATCH  /api/turmas/{id}/desativar
+PATCH  /api/turmas/{id}/ativar
+```
+
+### Testes da API
+
+- [ ] Criar turma com disciplina
+- [ ] Criar turma com docente
+- [ ] Listar turmas
+- [ ] Buscar turmas por docente
+- [ ] Buscar turmas por disciplina
+- [ ] Atualizar turma
+- [ ] Desativar turma
+
+### Frontend
+
+Criar:
+
+```text
+frontend/src/services/turmaService.ts
+frontend/src/pages/admin/turmas/ListaTurmas.tsx
+frontend/src/pages/admin/turmas/FormularioTurma.tsx
+```
+
+### Integração
+
+- [ ] Carregar disciplinas no formulário
+- [ ] Carregar docentes no formulário
+- [ ] Selecionar disciplina
+- [ ] Selecionar docente
+- [ ] Cadastrar turma pelo frontend
+- [ ] Exibir turma na tabela
+- [ ] Permitir docente visualizar suas turmas
+
+### Regras de acesso
+
+- [ ] Administrador gerencia turmas
+- [ ] Docente visualiza suas turmas
+- [ ] Discente visualiza turmas em que está matriculado
+
+### Status
+
+```text
+Ainda não iniciado
 ```
 
 ---
 
-## 5.5 Módulo de Matrículas
+## 9.3 Módulo 6.3 — Matrículas
 
 ### Objetivo
 
-Permitir que o administrador matricule discentes em turmas.
+Permitir a matrícula de discentes em turmas.
 
-### Casos de uso relacionados
+### Backend
 
-- UC05 — Matricular Discente em Turma.
-
-### Funcionalidades
-
-- matricular discente;
-- consultar matrículas;
-- cancelar matrícula;
-- listar discentes por turma;
-- listar turmas de um discente.
-
-### Entidades principais
+Criar:
 
 ```text
-Matricula
-Discente
-Turma
-PeriodoLetivo
+Matricula.java
+MatriculaRepository.java
+MatriculaRequest.java
+MatriculaResponse.java
+MatriculaService.java
+MatriculaController.java
 ```
 
-### Regras principais
-
-- Um discente não pode ser matriculado duas vezes na mesma turma.
-- A matrícula deve estar vinculada a uma turma válida.
-- A matrícula deve estar vinculada a um discente ativo.
-- O cancelamento não deve apagar o histórico acadêmico.
-
-### Entregas esperadas
+Campos previstos:
 
 ```text
-[ ] Endpoint de matrícula
-[ ] Tela para matricular discente
-[ ] Validação de matrícula duplicada
-[ ] Consulta de matriculados por turma
-[ ] Consulta de turmas por discente
+id
+discente
+turma
+dataMatricula
+status
+```
+
+### Banco
+
+Criar migration:
+
+```text
+V4__criar_tabela_matriculas.sql
+```
+
+Relacionamentos:
+
+```text
+matriculas.discente_id → usuarios.id
+matriculas.turma_id    → turmas.id
+```
+
+### Endpoints previstos
+
+```text
+POST   /api/matriculas
+GET    /api/matriculas
+GET    /api/matriculas/{id}
+GET    /api/matriculas/turma/{turmaId}
+GET    /api/matriculas/discente/{discenteId}
+PATCH  /api/matriculas/{id}/cancelar
+```
+
+### Testes da API
+
+- [ ] Matricular discente em turma
+- [ ] Impedir matrícula duplicada
+- [ ] Listar discentes de uma turma
+- [ ] Listar turmas de um discente
+- [ ] Cancelar matrícula
+
+### Frontend
+
+Criar:
+
+```text
+frontend/src/services/matriculaService.ts
+frontend/src/pages/admin/matriculas/ListaMatriculas.tsx
+frontend/src/pages/admin/matriculas/FormularioMatricula.tsx
+```
+
+### Integração
+
+- [ ] Carregar discentes
+- [ ] Carregar turmas
+- [ ] Matricular discente pelo frontend
+- [ ] Atualizar lista de matrículas
+- [ ] Visualizar discentes de uma turma
+- [ ] Visualizar turmas de um discente
+
+### Regras de acesso
+
+- [ ] Administrador gerencia matrículas
+- [ ] Docente visualiza discentes de suas turmas
+- [ ] Discente visualiza suas próprias matrículas
+
+### Status
+
+```text
+Ainda não iniciado
 ```
 
 ---
 
-## 5.6 Módulo de Notas
+# 10. Módulo 7 — Notas e Frequência
+
+Este módulo depende de usuários, disciplinas, turmas e matrículas.
+
+---
+
+## 10.1 Módulo 7.1 — Notas
 
 ### Objetivo
 
-Permitir que docentes registrem e atualizem notas dos discentes nas turmas sob sua responsabilidade.
+Permitir que docentes lancem notas e discentes consultem seu desempenho.
 
-### Casos de uso relacionados
+### Backend
 
-- UC06 — Registrar Notas;
-- UC10 — Consultar Desempenho Acadêmico.
-
-### Funcionalidades
-
-- cadastrar avaliação;
-- registrar nota;
-- atualizar nota;
-- consultar notas por turma;
-- consultar notas por discente;
-- calcular média, se definido pelo grupo.
-
-### Entidades principais
+Criar:
 
 ```text
-Avaliacao
-Nota
-Matricula
-Turma
-Docente
-Discente
+Avaliacao.java
+Nota.java
+AvaliacaoRepository.java
+NotaRepository.java
+AvaliacaoRequest.java
+AvaliacaoResponse.java
+NotaRequest.java
+NotaResponse.java
+AvaliacaoController.java
+NotaController.java
 ```
 
-### Regras principais
+### Banco
 
-- Somente o docente responsável pela turma pode lançar ou alterar notas.
-- O discente só pode consultar suas próprias notas.
-- O administrador pode consultar dados para fins de relatório.
-- Notas devem estar associadas a uma matrícula e a uma avaliação.
-
-### Entregas esperadas
+Criar migrations:
 
 ```text
-[ ] Cadastro de avaliações
-[ ] Registro de notas
-[ ] Tela docente para lançamento de notas
-[ ] Tela discente para consulta de notas
-[ ] Validação de vínculo entre docente e turma
+V5__criar_tabela_avaliacoes.sql
+V6__criar_tabela_notas.sql
+```
+
+### Endpoints previstos
+
+```text
+POST /api/avaliacoes
+GET  /api/avaliacoes/turma/{turmaId}
+POST /api/notas
+PUT  /api/notas/{id}
+GET  /api/notas/matricula/{matriculaId}
+GET  /api/notas/turma/{turmaId}
+GET  /api/notas/minhas
+```
+
+### Frontend
+
+Criar services e telas para:
+
+- Avaliações
+- Lançamento de notas pelo docente
+- Consulta de notas pelo discente
+
+### Integração
+
+- [ ] Docente acessa suas turmas
+- [ ] Docente cria avaliação
+- [ ] Sistema lista alunos matriculados
+- [ ] Docente lança notas
+- [ ] Discente visualiza suas notas
+
+### Regras de acesso
+
+- [ ] Docente lança notas apenas em suas turmas
+- [ ] Discente consulta apenas suas próprias notas
+- [ ] Administrador consulta dados acadêmicos autorizados
+
+### Status
+
+```text
+Ainda não iniciado
 ```
 
 ---
 
-## 5.7 Módulo de Frequência
+## 10.2 Módulo 7.2 — Frequência
 
 ### Objetivo
 
-Permitir que docentes registrem frequência dos discentes e que discentes consultem sua situação.
+Permitir registro e consulta de frequência.
 
-### Casos de uso relacionados
+### Backend
 
-- UC07 — Registrar Frequência;
-- UC10 — Consultar Desempenho Acadêmico.
-
-### Funcionalidades
-
-- registrar presença/falta;
-- atualizar frequência;
-- consultar frequência por turma;
-- consultar frequência por discente;
-- calcular percentual de frequência.
-
-### Entidades principais
+Criar:
 
 ```text
-Frequencia
-Matricula
-Turma
-Discente
-Docente
+Frequencia.java
+FrequenciaRepository.java
+FrequenciaRequest.java
+FrequenciaResponse.java
+FrequenciaService.java
+FrequenciaController.java
 ```
 
-### Regras principais
+### Banco
 
-- Somente o docente responsável pela turma pode registrar frequência.
-- O discente só pode consultar sua própria frequência.
-- O percentual de frequência deve considerar presenças e carga horária total.
-- Caso o percentual seja inferior ao mínimo definido, o sistema pode indicar reprovação por falta.
-
-### Entregas esperadas
+Criar migration:
 
 ```text
-[ ] Registro de frequência no backend
-[ ] Tela docente para frequência
-[ ] Tela discente para consulta
-[ ] Cálculo percentual de frequência
-[ ] Validação de vínculo entre docente e turma
+V7__criar_tabela_frequencias.sql
+```
+
+### Endpoints previstos
+
+```text
+POST /api/frequencias
+PUT  /api/frequencias/{id}
+GET  /api/frequencias/matricula/{matriculaId}
+GET  /api/frequencias/turma/{turmaId}
+GET  /api/frequencias/minhas
+```
+
+### Frontend
+
+Criar tela para:
+
+- Professor registrar presença/falta
+- Aluno consultar frequência
+
+### Integração
+
+- [ ] Professor seleciona turma
+- [ ] Sistema lista discentes matriculados
+- [ ] Professor registra presença/falta
+- [ ] Discente consulta frequência
+
+### Regras de acesso
+
+- [ ] Docente registra frequência apenas de suas turmas
+- [ ] Discente consulta apenas sua frequência
+- [ ] Administrador consulta relatórios
+
+### Status
+
+```text
+Ainda não iniciado
 ```
 
 ---
 
-## 5.8 Módulo de Materiais Didáticos
+# 11. Módulo 8 — AVA: Materiais, Atividades e Entregas
+
+---
+
+## 11.1 Módulo 8.1 — Materiais Didáticos
+
+### Backend
+
+Criar:
+
+```text
+MaterialDidatico.java
+MaterialDidaticoRepository.java
+MaterialDidaticoRequest.java
+MaterialDidaticoResponse.java
+MaterialDidaticoService.java
+MaterialDidaticoController.java
+```
+
+### Banco
+
+Criar migration:
+
+```text
+V8__criar_tabela_materiais_didaticos.sql
+```
+
+### Endpoints previstos
+
+```text
+POST   /api/materiais
+GET    /api/materiais/turma/{turmaId}
+PUT    /api/materiais/{id}
+DELETE /api/materiais/{id}
+```
+
+### Frontend
+
+- Tela do professor para cadastrar materiais
+- Tela do aluno para consultar materiais
+
+### Integração
+
+- [ ] Professor cadastra material em uma turma
+- [ ] Backend vincula material à turma
+- [ ] Aluno visualiza materiais das turmas em que está matriculado
+
+### Status
+
+```text
+Ainda não iniciado
+```
+
+---
+
+## 11.2 Módulo 8.2 — Atividades
+
+### Backend
+
+Criar:
+
+```text
+Atividade.java
+AtividadeRepository.java
+AtividadeRequest.java
+AtividadeResponse.java
+AtividadeService.java
+AtividadeController.java
+```
+
+### Banco
+
+Criar migration:
+
+```text
+V9__criar_tabela_atividades.sql
+```
+
+### Endpoints previstos
+
+```text
+POST   /api/atividades
+GET    /api/atividades/turma/{turmaId}
+GET    /api/atividades/minhas
+PUT    /api/atividades/{id}
+PATCH  /api/atividades/{id}/encerrar
+DELETE /api/atividades/{id}
+```
+
+### Frontend
+
+- Tela do professor para criar atividades
+- Tela do aluno para visualizar atividades
+
+### Integração
+
+- [ ] Professor cria atividade
+- [ ] Backend vincula atividade à turma
+- [ ] Aluno visualiza atividades disponíveis
+- [ ] Sistema mostra prazo da atividade
+
+### Status
+
+```text
+Ainda não iniciado
+```
+
+---
+
+## 11.3 Módulo 8.3 — Entregas de Atividades
+
+### Backend
+
+Criar:
+
+```text
+EntregaAtividade.java
+EntregaAtividadeRepository.java
+EntregaAtividadeRequest.java
+EntregaAtividadeResponse.java
+EntregaAtividadeService.java
+EntregaAtividadeController.java
+```
+
+### Banco
+
+Criar migration:
+
+```text
+V10__criar_tabela_entregas_atividades.sql
+```
+
+### Endpoints previstos
+
+```text
+POST /api/entregas
+GET  /api/entregas/atividade/{atividadeId}
+GET  /api/entregas/minhas
+GET  /api/entregas/{id}
+```
+
+### Frontend
+
+- Tela do aluno para enviar atividade
+- Tela do professor para visualizar entregas
+
+### Integração
+
+- [ ] Aluno envia entrega
+- [ ] Backend registra data e hora
+- [ ] Professor visualiza entregas recebidas
+
+### Status
+
+```text
+Ainda não iniciado
+```
+
+---
+
+# 12. Módulo 9 — Relatórios Acadêmicos
 
 ### Objetivo
 
-Permitir que docentes disponibilizem materiais didáticos para suas turmas.
+Gerar relatórios acadêmicos com base nos dados do sistema.
 
-### Casos de uso relacionados
+### Dependências
 
-- UC08 — Gerenciar Materiais Didáticos.
+- Usuários
+- Disciplinas
+- Turmas
+- Matrículas
+- Notas
+- Frequência
 
-### Funcionalidades
+### Backend
 
-- cadastrar material;
-- listar materiais por turma;
-- editar material;
-- remover ou desativar material;
-- permitir acesso do discente aos materiais de suas turmas.
-
-### Entidades principais
+Criar:
 
 ```text
-MaterialDidatico
-Turma
-Docente
+RelatorioService.java
+RelatorioController.java
+DTOs de relatório
 ```
 
-### Regras principais
-
-- Docente só pode cadastrar material em turma vinculada a ele.
-- Discente só pode acessar materiais das turmas em que está matriculado.
-- O material pode ser inicialmente um link ou referência a arquivo.
-
-### Entregas esperadas
+### Endpoints previstos
 
 ```text
-[ ] CRUD de materiais no backend
-[ ] Tela docente para cadastrar material
-[ ] Tela discente para acessar material
-[ ] Validação de vínculo com turma
+GET /api/relatorios/boletim/{discenteId}
+GET /api/relatorios/turma/{turmaId}
+GET /api/relatorios/diario-classe/{turmaId}
+GET /api/relatorios/frequencia/{turmaId}
 ```
 
----
+### Frontend
 
-## 5.9 Módulo de Atividades
+- Tela de boletim do aluno
+- Tela de relatório de turma
+- Tela de diário de classe
+- Tela administrativa de relatórios
 
-### Objetivo
+### Integração
 
-Permitir que docentes cadastrem atividades e acompanhem entregas dos discentes.
+- [ ] Administrador consulta relatórios gerais
+- [ ] Docente consulta relatórios de suas turmas
+- [ ] Discente consulta seu boletim
+- [ ] Frontend exibe dados formatados
 
-### Casos de uso relacionados
-
-- UC09 — Gerenciar Atividades;
-- UC11 — Enviar Atividade.
-
-### Funcionalidades
-
-- cadastrar atividade;
-- editar atividade;
-- listar atividades por turma;
-- definir prazo de entrega;
-- permitir envio de atividade pelo discente;
-- listar entregas por atividade;
-- consultar entregas do discente.
-
-### Entidades principais
+### Status
 
 ```text
-Atividade
-EntregaAtividade
-Turma
-Docente
-Discente
-```
-
-### Regras principais
-
-- Docente só pode cadastrar atividade em turma vinculada a ele.
-- Discente só pode enviar atividade de turma em que está matriculado.
-- O sistema deve registrar data e hora da entrega.
-- O sistema deve tratar entrega fora do prazo, se essa regra for implementada.
-
-### Entregas esperadas
-
-```text
-[ ] Cadastro de atividades
-[ ] Tela docente de atividades
-[ ] Tela discente de atividades
-[ ] Envio de atividade
-[ ] Consulta de entregas
+Ainda não iniciado
 ```
 
 ---
 
-## 5.10 Módulo de Desempenho Acadêmico
+# 13. Módulo 10 — Revisão Geral da Integração
 
-### Objetivo
+Este módulo não significa que a integração começa apenas no final. A integração acontece em cada módulo.
 
-Permitir que o discente consulte sua situação acadêmica de forma centralizada.
+O módulo 10 serve para revisar, padronizar e corrigir todas as integrações já feitas.
 
-### Casos de uso relacionados
+### Revisão técnica
 
-- UC10 — Consultar Desempenho Acadêmico.
+- [ ] Revisar `api.ts`
+- [ ] Revisar services do frontend
+- [ ] Revisar envio do token JWT
+- [ ] Revisar rotas protegidas
+- [ ] Revisar permissões por perfil
+- [ ] Revisar mensagens de erro
+- [ ] Revisar mensagens de sucesso
+- [ ] Revisar carregamentos
 
-### Funcionalidades
+### Revisão por módulo
 
-- consultar disciplinas/turmas matriculadas;
-- consultar notas;
-- consultar frequência;
-- consultar média;
-- consultar situação final, se disponível.
+- [ ] Login integrado
+- [ ] Usuários integrados
+- [ ] Disciplinas integradas
+- [ ] Turmas integradas
+- [ ] Matrículas integradas
+- [ ] Notas integradas
+- [ ] Frequência integrada
+- [ ] Materiais integrados
+- [ ] Atividades integradas
+- [ ] Entregas integradas
+- [ ] Relatórios integrados
 
-### Regras principais
-
-- Discente só pode visualizar seus próprios dados.
-- Dados de notas e frequência são sensíveis e devem respeitar controle de acesso.
-
-### Entregas esperadas
+### Status
 
 ```text
-[ ] Endpoint de desempenho acadêmico
-[ ] Tela de desempenho do discente
-[ ] Integração com notas
-[ ] Integração com frequência
-[ ] Validação de privacidade
+Ainda não iniciado
 ```
 
 ---
 
-## 5.11 Módulo de Relatórios
+# 14. Módulo 11 — Testes, Documentação e Entrega
 
-### Objetivo
+### Testes funcionais
 
-Permitir a emissão de relatórios acadêmicos para acompanhamento administrativo.
+- [ ] Testar login como administrador
+- [ ] Testar login como docente
+- [ ] Testar login como discente
+- [ ] Testar usuários
+- [ ] Testar disciplinas
+- [ ] Testar turmas
+- [ ] Testar matrículas
+- [ ] Testar notas
+- [ ] Testar frequência
+- [ ] Testar materiais
+- [ ] Testar atividades
+- [ ] Testar entregas
+- [ ] Testar relatórios
 
-### Casos de uso relacionados
+### Testes de segurança
 
-- UC12 — Gerar Relatórios Acadêmicos.
+- [ ] Testar rota protegida sem token
+- [ ] Testar rota protegida com token inválido
+- [ ] Testar acesso de discente a rota de administrador
+- [ ] Testar acesso de docente a recurso de outro docente
+- [ ] Testar logout
 
-### Funcionalidades
+### Documentação
 
-- gerar boletim;
-- gerar diário de classe;
-- gerar relatório de turma;
-- gerar relatório de frequência;
-- gerar relatório de notas.
+- [ ] Atualizar README
+- [ ] Documentar execução do backend
+- [ ] Documentar execução do frontend
+- [ ] Documentar banco
+- [ ] Documentar endpoints principais
+- [ ] Documentar usuários de teste
+- [ ] Registrar prints
+- [ ] Preparar roteiro de apresentação
 
-### Perfis envolvidos
-
-| Perfil | Permissão |
-|---|---|
-| Administrador | Pode gerar relatórios acadêmicos |
-| Docente | Pode consultar relatórios das próprias turmas, se definido pelo grupo |
-| Discente | Pode consultar apenas seu próprio desempenho |
-
-### Entregas esperadas
-
-```text
-[ ] Relatório de turma
-[ ] Relatório de notas
-[ ] Relatório de frequência
-[ ] Boletim do discente
-[ ] Tela de relatórios
-```
-
-Observação: a primeira versão pode gerar relatórios em tela. Exportação em PDF pode ser tratada como melhoria se houver tempo.
-
----
-
-## 6. Estrutura sugerida do repositório
+### Status
 
 ```text
-sge/
-├── backend/
-│   ├── src/
-│   ├── pom.xml
-│   └── README.md
-│
-├── frontend/
-│   ├── src/
-│   ├── package.json
-│   └── README.md
-│
-├── database/
-│   ├── migrations/
-│   ├── seed.sql
-│   └── README.md
-│
-├── docs/
-│   ├── requisitos/
-│   ├── arquitetura/
-│   ├── api/
-│   ├── testes/
-│   ├── prints/
-│   └── apresentacao/
-│
-└── README.md
+Ainda não iniciado
 ```
 
 ---
 
-## 7. Estrutura sugerida do backend
+# 15. Resumo Geral dos Módulos
 
-```text
-backend/src/main/java/br/ufs/sge/
-├── auth/
-├── usuario/
-├── academico/
-│   ├── disciplina/
-│   ├── turma/
-│   ├── matricula/
-│   ├── nota/
-│   └── frequencia/
-├── ava/
-│   ├── material/
-│   ├── atividade/
-│   └── entrega/
-├── relatorio/
-├── shared/
-│   ├── exception/
-│   ├── dto/
-│   └── validation/
-└── config/
-```
-
-Cada módulo deve seguir o padrão:
-
-```text
-Controller → Service → Repository → Banco de Dados
-```
-
-### Responsabilidades
-
-| Camada | Responsabilidade |
-|---|---|
-| Controller | Receber requisições e devolver respostas |
-| Service | Aplicar regras de negócio |
-| Repository | Acessar o banco de dados |
-| Model/Entity | Representar entidades persistentes |
-| DTO | Transportar dados entre API e cliente |
-| Exception | Tratar erros de forma padronizada |
+| Módulo | Nome | Backend | Frontend | Integração | Status |
+|---|---|---|---|---|---|
+| 1 | Estrutura inicial | Concluído | Concluído | Não aplicável | Concluído |
+| 2 | Banco e persistência | Concluído | Não aplicável | Backend + banco | Concluído |
+| 3 | Frontend base | Não aplicável | Concluído | Ainda não integrado | Concluído inicial |
+| 4 | Segurança inicial | Concluído | Não aplicável | Parcial | Concluído inicial |
+| 5.1 | Usuários backend | Concluído | Não iniciado | Não integrado ao frontend | Concluído inicial |
+| 5.2 | Login/JWT backend | Concluído | Não iniciado | Não integrado ao frontend | Concluído inicial |
+| 5.3 | Login frontend | Backend pronto | Não iniciado | Não iniciado | Próximo módulo |
+| 5.4 | Usuários frontend | Backend pronto | Não iniciado | Não iniciado | Ainda não iniciado |
+| 6.1 | Disciplinas | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 6.2 | Turmas | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 6.3 | Matrículas | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 7.1 | Notas | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 7.2 | Frequência | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 8.1 | Materiais | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 8.2 | Atividades | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 8.3 | Entregas | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 9 | Relatórios | Não iniciado | Não iniciado | Não iniciado | Ainda não iniciado |
+| 10 | Revisão geral da integração | Parcial | Parcial | Não iniciado | Ainda não iniciado |
+| 11 | Testes e entrega | Parcial | Parcial | Parcial | Ainda não iniciado |
 
 ---
 
-## 8. Estrutura sugerida do frontend
+# 16. Ordem Recomendada a Partir de Agora
 
 ```text
-frontend/src/
-├── components/
-├── pages/
-│   ├── auth/
-│   ├── usuarios/
-│   ├── disciplinas/
-│   ├── turmas/
-│   ├── matriculas/
-│   ├── notas/
-│   ├── frequencias/
-│   ├── materiais/
-│   ├── atividades/
-│   ├── desempenho/
-│   └── relatorios/
-├── services/
-├── routes/
-├── contexts/
-├── hooks/
-├── styles/
-└── utils/
-```
-
-### Responsabilidades
-
-| Pasta | Responsabilidade |
-|---|---|
-| components | Componentes reutilizáveis |
-| pages | Telas principais do sistema |
-| services | Comunicação com a API |
-| routes | Rotas públicas e privadas |
-| contexts | Estado global, autenticação e usuário logado |
-| hooks | Lógicas reutilizáveis |
-| styles | Estilos globais e específicos |
-| utils | Funções auxiliares |
-
----
-
-## 9. Banco de dados — entidades mínimas
-
-As entidades mínimas previstas para a primeira versão funcional são:
-
-```text
-Usuario
-Perfil
-Disciplina
-Turma
-PeriodoLetivo
-Matricula
-Avaliacao
-Nota
-Frequencia
-MaterialDidatico
-Atividade
-EntregaAtividade
-```
-
-### Relacionamentos principais
-
-```text
-Usuario possui um Perfil.
-Docente é um usuário com perfil DOCENTE.
-Discente é um usuário com perfil DISCENTE.
-Administrador é um usuário com perfil ADMINISTRADOR.
-Disciplina possui várias Turmas.
-Turma pertence a uma Disciplina.
-Turma possui um ou mais Docentes responsáveis.
-Discente realiza Matrícula em Turma.
-Matrícula liga Discente e Turma.
-Nota pertence a uma Matrícula e a uma Avaliação.
-Frequência pertence a uma Matrícula.
-Material Didático pertence a uma Turma.
-Atividade pertence a uma Turma.
-Entrega de Atividade pertence a uma Atividade e a um Discente.
+1. Integrar login no frontend
+2. Integrar tela de usuários
+3. Melhorar tratamento de erros
+4. Implementar disciplinas com backend + frontend + integração
+5. Implementar turmas com backend + frontend + integração
+6. Implementar matrículas com backend + frontend + integração
+7. Implementar notas com backend + frontend + integração
+8. Implementar frequência com backend + frontend + integração
+9. Implementar materiais com backend + frontend + integração
+10. Implementar atividades com backend + frontend + integração
+11. Implementar entregas com backend + frontend + integração
+12. Implementar relatórios
+13. Revisar integração geral
+14. Testar, documentar e preparar apresentação
 ```
 
 ---
 
-## 10. Ordem geral de desenvolvimento
+# 17. Comandos Git para Atualizar o README
 
-A ordem abaixo evita retrabalho e respeita as dependências entre módulos.
+Após substituir o conteúdo do `README.md`, execute:
 
-### Etapa 1 — Preparação do projeto
-
-```text
-[ ] Criar repositório GitHub
-[ ] Criar estrutura de pastas
-[ ] Criar projeto backend
-[ ] Criar projeto frontend
-[ ] Configurar banco de dados
-[ ] Definir padrão de commits
-[ ] Definir branches
-[ ] Criar README inicial
-[ ] Criar quadro de tarefas
-```
-
-### Etapa 2 — Base visual e base técnica
-
-```text
-[ ] Layout inicial do frontend
-[ ] Menu lateral ou superior
-[ ] Página inicial por perfil
-[ ] Configuração da API no frontend
-[ ] Configuração de CORS no backend
-[ ] Tratamento global de erros
-[ ] Padronização de respostas da API
-```
-
-### Etapa 3 — Acesso e segurança
-
-```text
-[ ] Login
-[ ] Logout
-[ ] Usuário logado
-[ ] Controle de perfil
-[ ] Rotas privadas no frontend
-[ ] Endpoints protegidos no backend
-[ ] Seed com usuários de teste
-```
-
-### Etapa 4 — Usuários
-
-```text
-[ ] Cadastro de usuário
-[ ] Listagem de usuários
-[ ] Edição de usuário
-[ ] Desativação de usuário
-[ ] Filtro por perfil
-[ ] Validação de permissões
-```
-
-### Etapa 5 — Disciplinas
-
-```text
-[ ] Cadastro de disciplina
-[ ] Listagem de disciplinas
-[ ] Edição de disciplina
-[ ] Desativação de disciplina
-[ ] Validações básicas
-```
-
-### Etapa 6 — Turmas
-
-```text
-[ ] Cadastro de turma
-[ ] Listagem de turmas
-[ ] Edição de turma
-[ ] Vínculo com disciplina
-[ ] Vínculo com docente
-[ ] Consulta de turmas do docente
-```
-
-### Etapa 7 — Matrículas
-
-```text
-[ ] Matricular discente em turma
-[ ] Impedir matrícula duplicada
-[ ] Listar matriculados por turma
-[ ] Listar turmas do discente
-[ ] Cancelar matrícula
-```
-
-### Etapa 8 — Notas
-
-```text
-[ ] Criar avaliação
-[ ] Lançar nota
-[ ] Editar nota
-[ ] Consultar notas por turma
-[ ] Consultar notas do discente
-[ ] Calcular média, se definido
-```
-
-### Etapa 9 — Frequência
-
-```text
-[ ] Registrar presença/falta
-[ ] Editar frequência
-[ ] Consultar frequência por turma
-[ ] Consultar frequência do discente
-[ ] Calcular percentual de frequência
-```
-
-### Etapa 10 — Materiais didáticos
-
-```text
-[ ] Cadastrar material
-[ ] Listar materiais por turma
-[ ] Editar material
-[ ] Remover/desativar material
-[ ] Discente acessar materiais das próprias turmas
-```
-
-### Etapa 11 — Atividades e entregas
-
-```text
-[ ] Cadastrar atividade
-[ ] Listar atividades por turma
-[ ] Editar atividade
-[ ] Enviar atividade
-[ ] Consultar entregas
-[ ] Registrar data/hora de entrega
-```
-
-### Etapa 12 — Desempenho acadêmico
-
-```text
-[ ] Tela de desempenho do discente
-[ ] Consulta de notas
-[ ] Consulta de frequência
-[ ] Consulta de turmas/disciplinas
-[ ] Situação acadêmica resumida
-```
-
-### Etapa 13 — Relatórios
-
-```text
-[ ] Boletim
-[ ] Diário de classe
-[ ] Relatório de turma
-[ ] Relatório de notas
-[ ] Relatório de frequência
-```
-
-### Etapa 14 — Integração geral
-
-```text
-[ ] Integrar todas as telas com a API
-[ ] Verificar permissões por perfil
-[ ] Corrigir erros de navegação
-[ ] Corrigir erros de validação
-[ ] Revisar dados exibidos
-```
-
-### Etapa 15 — Testes
-
-```text
-[ ] Testar login
-[ ] Testar permissões
-[ ] Testar CRUDs
-[ ] Testar matrícula duplicada
-[ ] Testar lançamento de notas
-[ ] Testar registro de frequência
-[ ] Testar envio de atividade
-[ ] Testar relatórios
-[ ] Registrar evidências com prints
-```
-
-### Etapa 16 — Deploy e apresentação
-
-```text
-[ ] Preparar ambiente final
-[ ] Configurar variáveis de ambiente
-[ ] Criar dados de demonstração
-[ ] Atualizar README
-[ ] Registrar instruções de execução
-[ ] Preparar roteiro de apresentação
-[ ] Realizar ensaio da apresentação
+```powershell
+git status
+git add README.md
+git commit -m "docs: atualiza plano detalhado do projeto"
+git push origin main
 ```
 
 ---
 
-## 11. Divisão sugerida do grupo
+# 18. Observações Importantes
 
-A equipe pode ser organizada por responsabilidade, sem impedir colaboração entre membros.
-
-| Papel | Responsabilidades |
-|---|---|
-| Coordenação/Integração | Organizar tarefas, revisar entregas, manter alinhamento com documentação |
-| Backend | API, regras de negócio, segurança, persistência e integração com banco |
-| Frontend | Telas, rotas, componentes, consumo da API e usabilidade |
-| Banco de Dados | Modelo físico, migrations, seeds, integridade e consultas |
-| QA/Testes | Testes funcionais, testes de integração, bugs e evidências |
-| Documentação/Apresentação | README, instruções de execução, prints, roteiro e material final |
-
-Observação: mesmo que cada pessoa tenha uma responsabilidade principal, todos devem revisar código e entender o fluxo geral do sistema para evitar dependência de uma única pessoa.
-
----
-
-## 12. Fluxo de trabalho com Git
-
-### Branches sugeridas
-
-```text
-main
-└── develop
-    ├── feature/auth
-    ├── feature/usuarios
-    ├── feature/disciplinas
-    ├── feature/turmas
-    ├── feature/matriculas
-    ├── feature/notas
-    ├── feature/frequencia
-    ├── feature/ava
-    └── feature/relatorios
-```
-
-### Regras de uso
-
-```text
-[ ] Nunca desenvolver direto na main
-[ ] Criar branch para cada módulo ou tarefa
-[ ] Fazer commits pequenos e claros
-[ ] Abrir pull request antes de juntar na develop
-[ ] Revisar código antes de aceitar pull request
-[ ] Testar antes de fazer merge
-```
-
-### Padrão de commits sugerido
-
-```text
-feat: adiciona cadastro de usuários
-fix: corrige validação de login
-docs: atualiza README
-refactor: reorganiza service de matrícula
-test: adiciona testes de frequência
-style: ajusta layout da tela de turmas
-```
-
----
-
-## 13. Critérios de pronto por funcionalidade
-
-Uma funcionalidade só deve ser considerada pronta quando cumprir todos os itens abaixo.
-
-```text
-[ ] Tela implementada, quando aplicável
-[ ] Endpoint implementado, quando aplicável
-[ ] Regra de negócio implementada no service
-[ ] Persistência funcionando
-[ ] Validações obrigatórias implementadas
-[ ] Controle de acesso por perfil aplicado
-[ ] Erros tratados de forma compreensível
-[ ] Teste manual realizado
-[ ] Evidência registrada com print ou descrição
-[ ] Código revisado por outro membro
-[ ] README ou documentação atualizada, se necessário
-```
-
----
-
-## 14. Critérios de qualidade
-
-Durante o desenvolvimento, o grupo deve observar:
-
-### Segurança
-
-- senha com hash;
-- controle por perfil;
-- rotas protegidas;
-- endpoints protegidos;
-- discente não acessa dados de outro discente;
-- docente não altera dados de turma que não é sua.
-
-### Integridade
-
-- evitar matrícula duplicada;
-- validar vínculos entre turma, disciplina e docente;
-- validar vínculos entre matrícula, nota e frequência;
-- não apagar histórico acadêmico indevidamente.
-
-### Manutenibilidade
-
-- separar controller, service, repository e entity;
-- evitar regra de negócio no frontend;
-- evitar regra de negócio no controller;
-- manter nomes consistentes com a documentação;
-- padronizar DTOs e respostas.
-
-### Usabilidade
-
-- telas simples;
-- mensagens claras;
-- formulários objetivos;
-- navegação por perfil;
-- feedback visual para erros e sucessos.
-
-### Testabilidade
-
-- casos de uso testáveis;
-- dados de teste padronizados;
-- endpoints documentados;
-- prints de evidência;
-- roteiro de demonstração.
-
----
-
-## 15. Roteiro recomendado de demonstração
-
-Para apresentar o sistema de forma coerente, o grupo pode seguir este roteiro:
-
-```text
-1. Login como Administrador
-2. Cadastrar Docente
-3. Cadastrar Discente
-4. Cadastrar Disciplina
-5. Cadastrar Turma
-6. Vincular Docente à Turma
-7. Matricular Discente na Turma
-8. Login como Docente
-9. Consultar Minhas Turmas
-10. Registrar Nota
-11. Registrar Frequência
-12. Cadastrar Material Didático
-13. Cadastrar Atividade
-14. Login como Discente
-15. Consultar Notas
-16. Consultar Frequência
-17. Acessar Material
-18. Enviar Atividade
-19. Login como Administrador
-20. Gerar Relatório Acadêmico
-```
-
-Esse fluxo demonstra os principais casos de uso e evidencia a integração entre frontend, backend, banco de dados e regras de acesso.
-
----
-
-## 16. Priorização para entrega mínima funcional
-
-Caso o prazo fique apertado, priorizar o seguinte MVP:
-
-```text
-[ ] Login com perfis
-[ ] CRUD de usuários
-[ ] CRUD de disciplinas
-[ ] CRUD de turmas
-[ ] Matrícula de discente
-[ ] Registro de notas
-[ ] Registro de frequência
-[ ] Consulta de desempenho pelo discente
-[ ] Relatório simples de turma ou boletim
-```
-
-Funcionalidades que podem ficar como melhoria, se necessário:
-
-```text
-[ ] Recuperação de senha
-[ ] Exportação de relatório em PDF
-[ ] Upload real de arquivos
-[ ] Notificações
-[ ] Dashboard avançado
-[ ] Filtros complexos
-[ ] Histórico detalhado de alterações
-```
-
----
-
-## 17. O que evitar durante o desenvolvimento
-
-Para manter o projeto dentro do escopo, evitar:
-
-- criar funcionalidades não documentadas antes do core funcionar;
-- desenvolver microsserviços;
-- criar app mobile;
-- criar chat interno;
-- criar fórum complexo;
-- criar financeiro completo;
-- iniciar relatórios avançados antes de notas, frequência e matrícula;
-- misturar regra de negócio no frontend;
-- deixar endpoints sem controle de perfil;
-- usar dados reais na fase de teste.
-
----
-
-## 18. Checklist final da entrega
-
-```text
-[ ] Sistema executa localmente
-[ ] Frontend executa sem erro
-[ ] Backend executa sem erro
-[ ] Banco conecta corretamente
-[ ] Usuários de teste disponíveis
-[ ] Login funcionando
-[ ] Perfis funcionando
-[ ] Casos de uso principais funcionando
-[ ] README atualizado
-[ ] Endpoints documentados
-[ ] Prints das telas principais salvos
-[ ] Testes manuais documentados
-[ ] Roteiro de apresentação pronto
-[ ] Grupo realizou ensaio da demonstração
-```
-
----
-
-## 19. Resumo das etapas
-
-```text
-1. Preparar ambiente e repositório
-2. Implementar base técnica do frontend, backend e banco
-3. Implementar autenticação e perfis
-4. Implementar usuários
-5. Implementar disciplinas
-6. Implementar turmas
-7. Implementar matrículas
-8. Implementar notas
-9. Implementar frequência
-10. Implementar materiais didáticos
-11. Implementar atividades e entregas
-12. Implementar desempenho acadêmico
-13. Implementar relatórios
-14. Integrar frontend, backend e banco
-15. Testar casos de uso
-16. Corrigir bugs
-17. Documentar execução e evidências
-18. Preparar deploy e apresentação
-```
-
----
-
-## 20. Observação final
-
-O grupo deve manter o desenvolvimento fiel à documentação. O objetivo não é criar o maior sistema possível, mas entregar um SGE coerente, funcional, rastreável e alinhado aos requisitos, casos de uso, arquitetura em camadas, controle de acesso por perfil e regras acadêmicas documentadas.
+- Não coloque senha real do banco no repositório.
+- Use variáveis de ambiente para dados sensíveis.
+- A integração deve acontecer módulo por módulo.
+- A branch `main` deve conter apenas versões testadas.
+- O frontend deve consumir a API com token JWT nas rotas protegidas.
+- O projeto deve continuar alinhado à documentação de requisitos, análise, design, arquitetura e plano de projeto.
