@@ -40,7 +40,7 @@ export default function PaginaHorario() {
 
         // Matrículas ativas do estudante
         const minhasMatriculas = todasMatriculas.filter(
-          (m) => m.discenteId === usuario.id && m.status === 'ATIVA'
+          (m) => Number(m.discenteId) === usuario.id && m.status === 'ATIVA'
         )
         setMatriculas(minhasMatriculas)
         setTurmas(todasTurmas)

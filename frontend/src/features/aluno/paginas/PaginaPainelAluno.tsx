@@ -43,7 +43,7 @@ export default function PaginaPainelAluno() {
         
         // Filtra matrículas ativas para o aluno logado
         const minhasMatriculas = todasMatriculas.filter(
-          (m) => m.discenteId === usuario.id && m.status === 'ATIVA'
+          (m) => Number(m.discenteId) === usuario.id && m.status === 'ATIVA'
         )
         setMatriculas(minhasMatriculas)
 

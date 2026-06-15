@@ -38,7 +38,7 @@ export default function PaginaRelatoriosProfessor() {
       if (!usuario) return
       try {
         const listaTurmas = await obterTurmas()
-        const filtradas = listaTurmas.filter((t) => t.docenteId === usuario.id && t.status !== 'CANCELADA')
+        const filtradas = listaTurmas.filter((t) => Number(t.docenteId) === usuario.id && t.status !== 'CANCELADA')
         setTurmas(filtradas)
         if (filtradas.length > 0) {
           setTurmaId(filtradas[0].id)

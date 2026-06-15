@@ -39,7 +39,7 @@ export default function PaginaMinhasTurmas() {
         ])
 
         // Filtra turmas do professor logado
-        const minhasTurmas = listaTurmas.filter((t) => t.docenteId === usuario.id && t.status !== 'CANCELADA')
+        const minhasTurmas = listaTurmas.filter((t) => Number(t.docenteId) === usuario.id&& t.status !== 'CANCELADA')
 
         // Associa a contagem de matrículas ativas para cada turma
         const turmasPreenchidas = minhasTurmas.map((turma) => {

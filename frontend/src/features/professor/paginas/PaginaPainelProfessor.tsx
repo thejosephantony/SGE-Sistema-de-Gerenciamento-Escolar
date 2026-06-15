@@ -44,7 +44,7 @@ export default function PaginaPainelProfessor() {
         ])
 
         // Filtra as turmas do professor logado
-        const minhasTurmas = todasTurmas.filter((t) => t.docenteId === usuario.id && t.status !== 'CANCELADA')
+        const minhasTurmas = todasTurmas.filter((t) => Number(t.docenteId) === usuario.id && t.status !== 'CANCELADA')
         const minhasTurmasIds = minhasTurmas.map((t) => t.id)
 
         // Filtra as matrículas nas turmas do professor

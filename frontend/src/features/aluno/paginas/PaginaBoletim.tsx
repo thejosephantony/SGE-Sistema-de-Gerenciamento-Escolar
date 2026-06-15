@@ -29,11 +29,11 @@ export default function PaginaBoletim() {
           obterUsuarios()
         ])
         const filtradas = todasMatriculas.filter(
-          (m) => m.discenteId === usuario.id && m.status === 'ATIVA'
+          (m) => Number(m.discenteId) === usuario.id && m.status === 'ATIVA'
         )
         setMatriculas(filtradas)
 
-        const info = todosUsuarios.find((u) => u.id === usuario.id)
+        const info = todosUsuarios.find((u) => Number(u.id) === usuario.id)
         if (info) {
           setAlunoInfo(info)
         }
