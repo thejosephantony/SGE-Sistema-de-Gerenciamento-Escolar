@@ -1,5 +1,7 @@
 package br.ufs.sge.auth.service;
 
+import br.ufs.sge.shared.exception.CredenciaisInvalidasException;
+import br.ufs.sge.shared.exception.UsuarioInativoException;
 import br.ufs.sge.auth.dto.LoginRequest;
 import br.ufs.sge.auth.dto.LoginResponse;
 import br.ufs.sge.security.JwtService;
@@ -27,14 +29,14 @@ public class AuthService {
      */
     public LoginResponse login(LoginRequest request) {
         Usuario usuario = usuarioRepository.findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("E-mail ou senha inválidos."));
+                .orElseThrow(() -> new CredenciaisInvalidasException("E-mail ou senha inválidos."));
 
         if (!passwordEncoder.matches(request.senha(), usuario.getSenhaHash())) {
-            throw new RuntimeException("E-mail ou senha inválidos.");
+            throw new CredenciaisInvalidasException("E-mail ou senha inválidos.");
         }
 
         if (!StatusUsuario.ATIVO.equals(usuario.getStatus())) {
-            throw new RuntimeException("Usuário inativo. Entre em contato com a administração.");
+            throw new UsuarioInativoException("Usuário inativo. Entre em contato com a administração.");
         }
 
         String token = jwtService.gerarToken(usuario);

@@ -1,0 +1,10 @@
+CREATE TABLE matriculas (
+    id BIGSERIAL PRIMARY KEY,
+    data_matricula TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(30) NOT NULL DEFAULT 'ATIVA',
+    discente_id BIGINT NOT NULL REFERENCES usuarios(id),
+    turma_id BIGINT NOT NULL REFERENCES turmas(id),
+    nota_p1 DOUBLE PRECISION,
+    nota_p2 DOUBLE PRECISION,
+    faltas INTEGER
+);

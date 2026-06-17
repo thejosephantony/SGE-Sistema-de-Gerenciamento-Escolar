@@ -2,11 +2,13 @@ package br.ufs.sge.usuario.controller;
 
 import br.ufs.sge.usuario.dto.UsuarioRequest;
 import br.ufs.sge.usuario.dto.UsuarioResponse;
+import br.ufs.sge.usuario.dto.UsuarioUpdateRequest;
 import br.ufs.sge.usuario.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/usuarios")
+@PreAuthorize("hasRole('ADMINISTRADOR')")
 @RequiredArgsConstructor
 public class UsuarioController {
 
@@ -59,7 +62,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> atualizar(
             @PathVariable Long id,
-            @RequestBody @Valid UsuarioRequest request) {
+            @RequestBody @Valid UsuarioUpdateRequest request) {
         UsuarioResponse response = usuarioService.atualizarUsuario(id, request);
         return ResponseEntity.ok(response);
     }

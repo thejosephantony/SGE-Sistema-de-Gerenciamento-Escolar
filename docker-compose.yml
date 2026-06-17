@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sge-postgres
+    environment:
+      POSTGRES_DB: sge
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha_do_postgres_sge
+    ports:
+      - '5432:5432'
+    volumes:
+      - sge_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  sge_postgres_data:

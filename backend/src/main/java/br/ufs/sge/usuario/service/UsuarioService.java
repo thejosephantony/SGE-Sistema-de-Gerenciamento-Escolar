@@ -1,7 +1,10 @@
 package br.ufs.sge.usuario.service;
 
+import br.ufs.sge.shared.exception.EmailDuplicadoException;
+import br.ufs.sge.shared.exception.EntidadeNaoEncontradaException;
 import br.ufs.sge.usuario.dto.UsuarioRequest;
 import br.ufs.sge.usuario.dto.UsuarioResponse;
+import br.ufs.sge.usuario.dto.UsuarioUpdateRequest;
 import br.ufs.sge.usuario.model.StatusUsuario;
 import br.ufs.sge.usuario.model.Usuario;
 import br.ufs.sge.usuario.repository.UsuarioRepository;
@@ -28,7 +31,7 @@ public class UsuarioService {
     public UsuarioResponse cadastrarUsuario(UsuarioRequest request) {
 
         if (usuarioRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Já existe um usuário com este e-mail.");
+            throw new EmailDuplicadoException("Já existe um usuário com este e-mail.");
         }
 
         String senhaCriptografada = passwordEncoder.encode(request.senha());
@@ -39,6 +42,11 @@ public class UsuarioService {
                 .senhaHash(senhaCriptografada)
                 .perfil(request.perfil())
                 .status(StatusUsuario.ATIVO)
+                .matricula(request.matricula())
+                .curso(request.curso())
+                .registroDocente(request.registroDocente())
+                .titulacao(request.titulacao())
+                .matriculaAdministrativa(request.matriculaAdministrativa())
                 .build();
 
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
@@ -67,18 +75,23 @@ public class UsuarioService {
     /**
      * Atualiza os dados de um usuário existente.
      */
-    public UsuarioResponse atualizarUsuario(Long id, UsuarioRequest request) {
+    public UsuarioResponse atualizarUsuario(Long id, UsuarioUpdateRequest request) {
         Usuario usuario = buscarEntidadePorId(id);
 
         usuarioRepository.findByEmail(request.email())
                 .filter(usuarioEncontrado -> !usuarioEncontrado.getId().equals(id))
                 .ifPresent(usuarioEncontrado -> {
-                    throw new RuntimeException("Já existe outro usuário cadastrado com este e-mail.");
+                    throw new EmailDuplicadoException("Já existe outro usuário cadastrado com este e-mail.");
                 });
 
         usuario.setNome(request.nome());
         usuario.setEmail(request.email());
         usuario.setPerfil(request.perfil());
+        usuario.setMatricula(request.matricula());
+        usuario.setCurso(request.curso());
+        usuario.setRegistroDocente(request.registroDocente());
+        usuario.setTitulacao(request.titulacao());
+        usuario.setMatriculaAdministrativa(request.matriculaAdministrativa());
 
         if (request.senha() != null && !request.senha().isBlank()) {
             usuario.setSenhaHash(passwordEncoder.encode(request.senha()));
@@ -112,6 +125,6 @@ public class UsuarioService {
      */
     private Usuario buscarEntidadePorId(Long id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Usuário não encontrado."));
     }
 }

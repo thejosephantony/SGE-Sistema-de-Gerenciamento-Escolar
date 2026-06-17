@@ -14,16 +14,25 @@ public record UsuarioResponse(
     String nome,
     String email,
     PerfilUsuario perfil,
-    StatusUsuario status
-    
-){
-    public static UsuarioResponse fromEntity(Usuario usuario){
+    StatusUsuario status,
+    String matricula,
+    String curso,
+    String registroDocente,
+    String titulacao,
+    String matriculaAdministrativa
+) {
+    public static UsuarioResponse fromEntity(Usuario usuario) {
         return new UsuarioResponse(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
                 usuario.getPerfil(),
-                usuario.getStatus()
+                usuario.getStatus(),
+                usuario.getMatricula(),
+                usuario.getCurso(),
+                usuario.getRegistroDocente(),
+                usuario.getTitulacao(),
+                usuario.getMatriculaAdministrativa()
         );
     }
 }

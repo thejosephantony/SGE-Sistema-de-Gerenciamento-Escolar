@@ -5,6 +5,7 @@ import br.ufs.sge.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +24,7 @@ import java.util.List;
  * O login é público, mas as demais rotas exigem autenticação via token JWT.
  */
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -42,6 +44,22 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.setStatus(401);
+                            response.getWriter().write(
+                                    "{\"mensagem\":\"Não autorizado: Token ausente ou inválido.\",\"status\":401,\"timestamp\":\"" + java.time.LocalDateTime.now() + "\"}"
+                            );
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.setStatus(403);
+                            response.getWriter().write(
+                                    "{\"mensagem\":\"Acesso negado: Perfil sem permissão para acessar este recurso.\",\"status\":403,\"timestamp\":\"" + java.time.LocalDateTime.now() + "\"}"
+                            );
+                        })
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,

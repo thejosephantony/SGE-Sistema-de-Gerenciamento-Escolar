@@ -4,6 +4,11 @@
 export type StatusMatricula = 'ATIVA' | 'CANCELADA' | 'TRANCADA' | 'CONCLUIDA'
 
 /**
+ * Situação acadêmica calculada pelo backend (Módulo 7).
+ */
+export type SituacaoMatricula = 'APROVADO' | 'EM_RECUPERACAO' | 'REPROVADO_FREQUENCIA' | 'SEM_NOTAS'
+
+/**
  * Interface que representa o vínculo de Matrícula de um Discente em uma Turma.
  */
 export interface Matricula {
@@ -26,4 +31,8 @@ export interface Matricula {
   notaP1?: number
   notaP2?: number
   faltas?: number
+
+  // Campos calculados pelo Backend (Módulo 7)
+  media?: number
+  situacao?: SituacaoMatricula
 }

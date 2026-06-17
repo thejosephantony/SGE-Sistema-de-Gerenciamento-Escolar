@@ -56,6 +56,22 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, length = 20)
     private StatusUsuario status = StatusUsuario.ATIVO;
 
+    @Column(length = 50)
+    private String matricula;
+
+    @Column(length = 100)
+    private String curso;
+
+    @Column(name = "registro_docente", length = 50)
+    private String registroDocente;
+
+    @Column(length = 50)
+    private String titulacao;
+
+    @Column(name = "matricula_administrativa", length = 50)
+    private String matriculaAdministrativa;
+
+
     /**
      * Define as permissões do usuário com base no perfil.
      */

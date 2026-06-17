@@ -8,15 +8,12 @@ import {
 import { useAuth } from '../../../contexts/ContextoAutenticacao'
 import PageContainer from '../../../components/ui/ContainerPagina'
 import PageHeader from '../../../components/ui/CabecalhoPagina'
-import { obterMatriculas } from '../../matriculas/servicos/servicoMatricula'
-import { obterUsuarios } from '../../usuarios/servicos/servicoUsuario'
+import { buscarMatriculasPorDiscente } from '../../matriculas/servicos/servicoMatricula'
 import type { Matricula } from '../../matriculas/tipos'
-import type { Usuario } from '../../usuarios/tipos'
 
 export default function PaginaBoletim() {
   const { usuario } = useAuth()
   const [matriculas, setMatriculas] = useState<Matricula[]>([])
-  const [alunoInfo, setAlunoInfo] = useState<Usuario | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -24,19 +21,10 @@ export default function PaginaBoletim() {
     async function carregarBoletim() {
       if (!usuario) return
       try {
-        const [todasMatriculas, todosUsuarios] = await Promise.all([
-          obterMatriculas(),
-          obterUsuarios()
-        ])
-        const filtradas = todasMatriculas.filter(
-          (m) => Number(m.discenteId) === usuario.id && m.status === 'ATIVA'
-        )
-        setMatriculas(filtradas)
-
-        const info = todosUsuarios.find((u) => Number(u.id) === usuario.id)
-        if (info) {
-          setAlunoInfo(info)
-        }
+        // Busca apenas as matrículas do aluno logado via endpoint otimizado
+        const minhasMatriculas = await buscarMatriculasPorDiscente(String(usuario.id))
+        const ativas = minhasMatriculas.filter((m) => m.status === 'ATIVA')
+        setMatriculas(ativas)
       } catch (err) {
         console.error(err)
         setErro('Erro ao carregar o seu boletim escolar.')
@@ -124,8 +112,8 @@ export default function PaginaBoletim() {
           <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '16px', marginBottom: '32px', backgroundColor: '#f9fafb', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb', color: '#374151', fontSize: '13px' }}>
             <div>
               <strong>Estudante:</strong> {usuario?.nome}<br />
-              <strong>Matrícula:</strong> {alunoInfo?.matricula || 'N/A'}<br />
-              <strong>Série / Curso:</strong> {alunoInfo?.curso || 'Ensino Médio'}
+              <strong>Matrícula (RA):</strong> {matriculas[0]?.discenteMatricula || 'N/A'}<br />
+              <strong>Série / Curso:</strong> Ensino Médio
             </div>
             <div>
               <strong>Ano Letivo:</strong> 2026<br />
@@ -154,26 +142,24 @@ export default function PaginaBoletim() {
                 {matriculas.map((m) => {
                   const p1 = m.notaP1 !== undefined ? m.notaP1 : NaN
                   const p2 = m.notaP2 !== undefined ? m.notaP2 : NaN
-                  const temNotas = !isNaN(p1) && !isNaN(p2)
-                  const mediaCalculada = temNotas ? (p1 + p2) / 2 : NaN
-
                   const faltasNum = m.faltas || 0
-                  const frequenciaCalculada = Math.max(0, 100 - (faltasNum * 4)) // Cada falta = -4%
+                  const frequenciaCalculada = Math.max(0, 100 - (faltasNum * 4))
+
+                  // Usa campos calculados pelo backend quando disponíveis
+                  const mediaFinal = m.media !== undefined ? m.media : (!isNaN(p1) && !isNaN(p2) ? (p1 + p2) / 2 : NaN)
 
                   let sitTxt = 'SEM NOTAS'
                   let sitCor = '#4b5563'
 
-                  if (frequenciaCalculada < 75) {
-                    sitTxt = 'REP. POR FALTA'
-                    sitCor = '#dc2626'
-                  } else if (temNotas) {
-                    if (mediaCalculada >= 6.0) {
-                      sitTxt = 'APROVADO'
-                      sitCor = '#16a34a'
-                    } else {
-                      sitTxt = 'RECUPERAÇÃO'
-                      sitCor = '#d97706'
-                    }
+                  switch (m.situacao) {
+                    case 'APROVADO':
+                      sitTxt = 'APROVADO'; sitCor = '#16a34a'; break
+                    case 'EM_RECUPERACAO':
+                      sitTxt = 'RECUPERAÇÃO'; sitCor = '#d97706'; break
+                    case 'REPROVADO_FREQUENCIA':
+                      sitTxt = 'REP. POR FALTA'; sitCor = '#dc2626'; break
+                    default:
+                      sitTxt = 'SEM NOTAS'; sitCor = '#4b5563'
                   }
 
                   return (
@@ -191,7 +177,7 @@ export default function PaginaBoletim() {
                         {!isNaN(p2) ? p2.toFixed(1) : '--'}
                       </td>
                       <td style={{ padding: '12px 8px', textAlign: 'center', fontFamily: 'monospace', fontWeight: 'bold' }}>
-                        {!isNaN(mediaCalculada) ? mediaCalculada.toFixed(1) : '--'}
+                        {!isNaN(mediaFinal) ? mediaFinal.toFixed(1) : '--'}
                       </td>
                       <td style={{ padding: '12px 8px', textAlign: 'center', fontFamily: 'monospace' }}>
                         {faltasNum}

@@ -12,7 +12,7 @@ import { useAuth } from '../../../contexts/ContextoAutenticacao'
 import PageContainer from '../../../components/ui/ContainerPagina'
 import PageHeader from '../../../components/ui/CabecalhoPagina'
 import { obterTurmas } from '../../turmas/servicos/servicoTurma'
-import { obterMatriculas, atualizarNotasFaltas } from '../../matriculas/servicos/servicoMatricula'
+import { buscarMatriculasPorTurma, atualizarNotasFaltas } from '../../matriculas/servicos/servicoMatricula'
 import type { Turma } from '../../turmas/tipos'
 import type { Matricula } from '../../matriculas/tipos'
 
@@ -73,15 +73,14 @@ export default function PaginaDiarioClasse() {
     async function carregarAlunosTurma() {
       if (!turmaSelecionadaId) return
       try {
-        const todasMatriculas = await obterMatriculas()
-        const filtradas = todasMatriculas.filter(
-          (m) => m.turmaId === turmaSelecionadaId && m.status === 'ATIVA'
-        )
-        setMatriculas(filtradas)
+        // Usa endpoint específico para buscar apenas alunos da turma selecionada
+        const filtradas = await buscarMatriculasPorTurma(turmaSelecionadaId)
+        const ativos = filtradas.filter((m) => m.status === 'ATIVA')
+        setMatriculas(ativos)
 
-        // Inicializa o estado de edição com os valores atuais do banco mock
+        // Inicializa o estado de edição com os valores atuais do banco
         const dicionarioEdicao: Record<string, RegistroNotasFaltas> = {}
-        filtradas.forEach((m) => {
+        ativos.forEach((m) => {
           dicionarioEdicao[m.id] = {
             notaP1: m.notaP1 !== undefined ? m.notaP1.toString() : '',
             notaP2: m.notaP2 !== undefined ? m.notaP2.toString() : '',
@@ -157,7 +156,7 @@ export default function PaginaDiarioClasse() {
     return true
   }
 
-  // Grava as alterações no serviço mockado
+  // Grava as alterações via API
   const handleSalvarDiario = async () => {
     if (!validarCampos()) return
     setSalvandoDados(true)
@@ -177,12 +176,10 @@ export default function PaginaDiarioClasse() {
 
       handleMostrarToast('Diário de classe salvo e atualizado com sucesso!', 'sucesso')
       
-      // Recarrega as informações atualizadas
-      const todasMatriculas = await obterMatriculas()
-      const filtradas = todasMatriculas.filter(
-        (m) => m.turmaId === turmaSelecionadaId && m.status === 'ATIVA'
-      )
-      setMatriculas(filtradas)
+      // Recarrega via endpoint específico da turma
+      const atualizadas = await buscarMatriculasPorTurma(turmaSelecionadaId)
+      const ativas = atualizadas.filter((m) => m.status === 'ATIVA')
+      setMatriculas(ativas)
     } catch (err) {
       console.error(err)
       handleMostrarToast('Erro ao tentar salvar notas e faltas.', 'erro')
@@ -355,12 +352,13 @@ export default function PaginaDiarioClasse() {
 
                 // Cálculo da Frequência
                 const faltasNum = Number(edicao.faltas) || 0
-                const frequenciaCalculada = Math.max(0, 100 - (faltasNum * 4)) // Cada falta = -4% de presença (sobre 25 aulas virtuais fictícias)
+                const frequenciaCalculada = Math.max(0, 100 - (faltasNum * 4)) // Cada falta = -4% de presença
 
-                // Definição da Situação em Tempo Real
-                let situacaoText = 'Sem Notas'
-                let situacaoCor = 'var(--cor-texto-secundario)'
-                let situacaoBg = 'var(--cor-fundo-alternativo)'
+                // Determinação da Situação (usa dado do backend quando disponível, senão calcula em tempo real pelos inputs)
+                const situacaoServidor = mat.situacao
+                let situacaoText: string
+                let situacaoCor: string
+                let situacaoBg: string
 
                 if (frequenciaCalculada < 75) {
                   situacaoText = 'REP. POR FALTA'
@@ -376,6 +374,10 @@ export default function PaginaDiarioClasse() {
                     situacaoCor = 'var(--cor-alerta)'
                     situacaoBg = 'hsl(38, 92%, 95%)'
                   }
+                } else {
+                  situacaoText = situacaoServidor === 'REPROVADO_FREQUENCIA' ? 'REP. POR FALTA' : 'Sem Notas'
+                  situacaoCor = situacaoServidor === 'REPROVADO_FREQUENCIA' ? 'var(--cor-erro)' : 'var(--cor-texto-secundario)'
+                  situacaoBg = situacaoServidor === 'REPROVADO_FREQUENCIA' ? 'hsl(350, 89%, 95%)' : 'var(--cor-fundo-alternativo)'
                 }
 
                 return (
