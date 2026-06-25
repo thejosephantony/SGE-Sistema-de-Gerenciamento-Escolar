@@ -50,8 +50,8 @@ export async function buscarMatriculasPorDiscente(discenteId: string): Promise<M
  */
 export async function matricularDiscente(
   discenteId: string,
-  discenteNome: string,
-  discenteMatricula: string,
+  _discenteNome: string,
+  _discenteMatricula: string,
   turmaId: string
 ): Promise<Matricula> {
   const response = await apiFetch<any>('/matriculas', {
