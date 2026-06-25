@@ -94,16 +94,23 @@ export default function UserFormModal({ usuarioParaEditar, onClose, onSave }: Us
     setCarregando(true)
 
     // Prepara os dados para salvar
-    const dadosParaSalvar: Omit<UsuarioCompleto, 'id'> & { id?: string } = {
-      ...(usuarioParaEditar ? { id: usuarioParaEditar.id } : {}),
-      nome,
-      email,
-      perfil,
-      status: usuarioParaEditar ? usuarioParaEditar.status : 'ATIVO',
-      ...(perfil === 'DISCENTE' ? { matricula, curso } : {}),
-      ...(perfil === 'DOCENTE' ? { registroDocente, titulacao } : {}),
-      ...(perfil === 'ADMINISTRADOR' ? { matriculaAdministrativa } : {})
-    }
+    const dadosParaSalvar: Omit<UsuarioCompleto, 'id'> & {
+        id?: string
+        senha?: string
+      } = {
+        ...(usuarioParaEditar ? { id: usuarioParaEditar.id } : {}),
+        nome,
+        email,
+        perfil,
+        status: usuarioParaEditar ? usuarioParaEditar.status : 'ATIVO',
+
+        // Envia senha apenas no cadastro.
+        ...(!usuarioParaEditar ? { senha } : {}),
+
+        ...(perfil === 'DISCENTE' ? { matricula, curso } : {}),
+        ...(perfil === 'DOCENTE' ? { registroDocente, titulacao } : {}),
+        ...(perfil === 'ADMINISTRADOR' ? { matriculaAdministrativa } : {})
+      }
 
     try {
       await onSave(dadosParaSalvar)
