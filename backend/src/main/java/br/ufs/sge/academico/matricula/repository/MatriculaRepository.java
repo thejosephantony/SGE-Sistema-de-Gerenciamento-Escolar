@@ -20,4 +20,5 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
     long countByTurmaIdAndStatus(Long turmaId, StatusMatricula status);
 
     boolean existsByDiscenteIdAndTurmaIdAndStatus(Long discenteId, Long turmaId, StatusMatricula status);
+    boolean existsByDiscenteIdAndTurmaId(Long discenteId, Long turmaId);
 }
