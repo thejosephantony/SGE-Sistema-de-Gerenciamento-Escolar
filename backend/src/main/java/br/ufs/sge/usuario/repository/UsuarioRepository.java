@@ -20,4 +20,28 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
      * Verifica se já existe um usuário cadastrado com o e-mail informado.
      */
     boolean existsByEmail(String email);
+    
+        /**
+     * Busca um discente pela matrícula acadêmica.
+     *
+     * A matrícula deve ser única para evitar dois alunos com
+     * o mesmo identificador acadêmico.
+     */
+    Optional<Usuario> findByMatricula(String matricula);
+
+    /**
+     * Busca um docente pelo registro docente.
+     *
+     * O registro docente deve ser único para evitar duplicidade
+     * entre professores.
+     */
+    Optional<Usuario> findByRegistroDocente(String registroDocente);
+
+    /**
+     * Busca um administrador pela matrícula administrativa.
+     *
+     * A matrícula administrativa deve ser única para evitar
+     * duplicidade entre usuários administrativos.
+     */
+    Optional<Usuario> findByMatriculaAdministrativa(String matriculaAdministrativa);
 }
