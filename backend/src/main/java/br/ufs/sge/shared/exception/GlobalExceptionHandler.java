@@ -12,103 +12,96 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Capturador global de exceções da API REST do SGE.
- * Formata as exceções em respostas JSON limpas e padronizadas.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    public record ErrorResponse(
-            String mensagem,
-            int status,
-            LocalDateTime timestamp
-    ) {}
+    public record ErrorResponse(String mensagem, int status, LocalDateTime timestamp) {}
 
     public record ValidationErrorResponse(
-            String mensagem,
-            int status,
-            Map<String, String> erros,
-            LocalDateTime timestamp
-    ) {}
+            String mensagem, int status,
+            Map<String, String> erros, LocalDateTime timestamp) {}
 
     @ExceptionHandler(CredenciaisInvalidasException.class)
     public ResponseEntity<ErrorResponse> handleCredenciaisInvalidas(CredenciaisInvalidasException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(ex.getMessage(), 401, LocalDateTime.now()));
     }
 
     @ExceptionHandler(UsuarioInativoException.class)
     public ResponseEntity<ErrorResponse> handleUsuarioInativo(UsuarioInativoException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(ex.getMessage(), 401, LocalDateTime.now()));
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<ErrorResponse> handleEntidadeNaoEncontrada(EntidadeNaoEncontradaException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(ex.getMessage(), 404, LocalDateTime.now()));
     }
 
     @ExceptionHandler(EmailDuplicadoException.class)
     public ResponseEntity<ErrorResponse> handleEmailDuplicado(EmailDuplicadoException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ex.getMessage(), 409, LocalDateTime.now()));
     }
 
     @ExceptionHandler(CodigoDisciplinaDuplicadoException.class)
     public ResponseEntity<ErrorResponse> handleCodigoDisciplinaDuplicado(CodigoDisciplinaDuplicadoException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ex.getMessage(), 409, LocalDateTime.now()));
     }
 
     @ExceptionHandler(TurmaDuplicadaException.class)
-    public ResponseEntity<ErrorResponse> handleTurmaDuplicado(TurmaDuplicadaException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    public ResponseEntity<ErrorResponse> handleTurmaDuplicada(TurmaDuplicadaException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ex.getMessage(), 409, LocalDateTime.now()));
     }
 
     @ExceptionHandler(MatriculaDuplicadaException.class)
     public ResponseEntity<ErrorResponse> handleMatriculaDuplicada(MatriculaDuplicadaException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ex.getMessage(), 409, LocalDateTime.now()));
     }
 
     @ExceptionHandler(TurmaCheiaException.class)
     public ResponseEntity<ErrorResponse> handleTurmaCheia(TurmaCheiaException ex) {
-        ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ex.getMessage(), 409, LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(AcessoNegadoException.class)
+    public ResponseEntity<ErrorResponse> handleAcessoNegado(AcessoNegadoException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(ex.getMessage(), 403, LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(AtividadeEncerradaException.class)
+    public ResponseEntity<ErrorResponse> handleAtividadeEncerrada(AtividadeEncerradaException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ErrorResponse(ex.getMessage(), 422, LocalDateTime.now()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationError(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+        Map<String, String> erros = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            String field = ((FieldError) error).getField();
+            erros.put(field, error.getDefaultMessage());
         });
-        
-        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
-                "Erro de validação nos campos informados.",
-                HttpStatus.BAD_REQUEST.value(),
-                errors,
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ValidationErrorResponse("Erro de validação nos campos informados.", 400, erros, LocalDateTime.now()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
-        ErrorResponse error = new ErrorResponse("Acesso negado: Perfil sem permissão para acessar este recurso.", HttpStatus.FORBIDDEN.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse("Acesso negado: Perfil sem permissão para acessar este recurso.", 403, LocalDateTime.now()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
-        // Log do erro real para desenvolvimento
         ex.printStackTrace();
-        ErrorResponse error = new ErrorResponse("Ocorreu um erro interno no servidor.", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Ocorreu um erro interno no servidor.", 500, LocalDateTime.now()));
     }
 }
