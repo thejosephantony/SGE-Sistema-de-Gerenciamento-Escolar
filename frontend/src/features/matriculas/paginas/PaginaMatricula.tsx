@@ -54,12 +54,12 @@ export default function EnrollmentPage() {
       // Filtra apenas usuários DISCENTES e ATIVOS
       const alunosAtivos = listaUsuarios.filter((u) => u.perfil === 'DISCENTE' && u.status === 'ATIVO')
       setDiscentes(alunosAtivos)
-      if (alunosAtivos.length > 0) setDiscenteId(alunosAtivos[0].id)
+      if (alunosAtivos.length > 0) setDiscenteId(String(alunosAtivos[0].id))
 
       // Filtra turmas que estão ABERTAS ou PLANEJADAS (aptas a receber alunos)
       const turmasAptas = listaTurmas.filter((t) => t.status === 'ABERTA' || t.status === 'PLANEJADA')
       setTurmas(turmasAptas)
-      if (turmasAptas.length > 0) setTurmaId(turmasAptas[0].id)
+      if (turmasAptas.length > 0) setTurmaId(String(turmasAptas[0].id))
 
     } catch (err) {
       console.error(err)
@@ -90,11 +90,16 @@ export default function EnrollmentPage() {
       return
     }
 
+    // Busca os dados adicionais do aluno selecionado.
+    // O valor do select vem como string, então comparamos convertendo para string.
+    const aluno = discentes.find((d) => String(d.id) === String(discenteId))
+
+    if (!aluno) {
+      handleMostrarToast('Aluno selecionado não encontrado. Atualize a página e tente novamente.', 'erro')
+      return
+    }
+
     setCarregandoSubmissao(true)
-    
-    // Busca os dados adicionais do aluno para o registro mockado
-    const aluno = discentes.find((d) => d.id === discenteId)
-    if (!aluno) return
 
     try {
       await matricularDiscente(
@@ -212,7 +217,9 @@ export default function EnrollmentPage() {
                   disabled={carregandoSubmissao}
                 >
                   {discentes.map((d) => (
-                    <option key={d.id} value={d.id}>{d.nome} (Matrícula: {d.matricula})</option>
+                    <option key={String(d.id)} value={String(d.id)}>
+                      {d.nome} - {d.email} (Matrícula: {d.matricula || 'N/A'})
+                    </option>
                   ))}
                 </select>
               </div>
