@@ -3,23 +3,19 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { 
   IconLayoutDashboard, 
   IconFileText, 
-  IconCalendar, 
+  IconCalendar,
+  IconBooks,
   IconLogout,
   IconMenu2,
   IconChevronLeft
 } from '@tabler/icons-react'
 import { useAuth } from '../../contexts/ContextoAutenticacao'
 
-/**
- * Componente de layout padrão para o perfil Aluno (Discente).
- * Contém a Sidebar lateral de navegação e a área de conteúdo dinâmico (Outlet).
- */
 export default function LayoutAluno() {
   const { usuario, logout } = useAuth()
   const navigate = useNavigate()
   const [colapsado, setColapsado] = useState(false)
 
-  // Executa o logout e retorna à tela de login
   const handleSair = () => {
     logout()
     navigate('/')
@@ -27,7 +23,6 @@ export default function LayoutAluno() {
 
   return (
     <div className="admin-layout">
-      {/* Sidebar de Navegação */}
       <aside className={`admin-sidebar ${colapsado ? 'collapsed' : ''}`}>
         <div className="admin-sidebar-logo">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -38,7 +33,6 @@ export default function LayoutAluno() {
           {!colapsado && <span>SGE</span>}
         </div>
 
-        {/* Botão de Alternância (Toggle) Absoluto na Borda */}
         <button 
           onClick={() => setColapsado(!colapsado)}
           className="sidebar-toggle-btn"
@@ -48,74 +42,49 @@ export default function LayoutAluno() {
           {colapsado ? <IconMenu2 size={14} /> : <IconChevronLeft size={14} />}
         </button>
 
-        {/* Links de navegação utilizando NavLink para gerenciar a classe 'active' */}
         <nav className="admin-sidebar-menu">
-          <NavLink 
-            to="/aluno/dashboard" 
-            className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}
-            data-tooltip="Painel Geral"
-          >
+          <NavLink to="/aluno/dashboard" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="Painel Geral">
             <IconLayoutDashboard size={20} aria-hidden="true" />
             <span>Painel Geral</span>
           </NavLink>
           
-          <NavLink 
-            to="/aluno/boletim" 
-            className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}
-            data-tooltip="Boletim Escolar"
-          >
+          <NavLink to="/aluno/boletim" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="Boletim Escolar">
             <IconFileText size={20} aria-hidden="true" />
             <span>Boletim Escolar</span>
           </NavLink>
+
+          <NavLink to="/aluno/ava" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="AVA">
+            <IconBooks size={20} aria-hidden="true" />
+            <span>AVA</span>
+          </NavLink>
           
-          <NavLink 
-            to="/aluno/horario" 
-            className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}
-            data-tooltip="Grade Horária"
-          >
+          <NavLink to="/aluno/horario" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="Grade Horária">
             <IconCalendar size={20} aria-hidden="true" />
             <span>Grade Horária</span>
           </NavLink>
         </nav>
 
-        {/* Rodapé da Sidebar - Botão Sair */}
         <div className="admin-sidebar-footer">
-          <button 
-            onClick={handleSair} 
-            className="admin-menu-item" 
-            style={{ color: 'hsl(350, 89%, 60%)' }}
-            data-tooltip="Sair do SGE"
-          >
+          <button onClick={handleSair} className="admin-menu-item" style={{ color: 'hsl(350, 89%, 60%)' }} data-tooltip="Sair do SGE">
             <IconLogout size={20} aria-hidden="true" />
             <span>Sair do SGE</span>
           </button>
         </div>
       </aside>
 
-      {/* Conteúdo Principal à Direita */}
       <div className="admin-content-area">
-        {/* Barra superior de identificação */}
         <header className="admin-header">
           <div className="admin-header-welcome">
             Olá, <span>{usuario?.nome || 'Aluno'}</span>
           </div>
-          
           <div className="admin-header-profile">
             <span className="admin-profile-tag" style={{ backgroundColor: 'var(--cor-primaria-suave)', color: 'var(--cor-primaria)' }}>Aluno</span>
-            
-            {/* Botão Sair visível apenas em mobile */}
-            <button 
-              onClick={handleSair} 
-              className="chip-botao" 
-              style={{ display: 'none', gap: '6px', color: 'var(--cor-erro)', borderColor: 'var(--cor-erro)' }}
-            >
+            <button onClick={handleSair} className="chip-botao" style={{ display: 'none', gap: '6px', color: 'var(--cor-erro)', borderColor: 'var(--cor-erro)' }}>
               <IconLogout size={16} />
               Sair
             </button>
           </div>
         </header>
-
-        {/* Área de carregamento dinâmico das rotas do aluno */}
         <Outlet />
       </div>
     </div>
