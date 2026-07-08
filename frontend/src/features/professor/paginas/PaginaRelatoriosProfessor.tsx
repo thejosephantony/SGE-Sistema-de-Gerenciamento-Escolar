@@ -224,7 +224,7 @@ export default function PaginaRelatoriosProfessor() {
                 </span>
                 
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="btn-secundario" style={{ padding: '8px 12px', gap: '6px', fontSize: '13px' }} onClick={() => alert("Simulando download do arquivo PDF do diário de classe...")}>
+                  <button className="btn-secundario" style={{ padding: '8px 12px', gap: '6px', fontSize: '13px' }} onClick={() => window.print()}>
                     <IconDownload size={14} />
                     Exportar
                   </button>

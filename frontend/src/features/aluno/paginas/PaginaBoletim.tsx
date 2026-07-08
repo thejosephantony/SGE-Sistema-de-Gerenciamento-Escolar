@@ -41,7 +41,7 @@ export default function PaginaBoletim() {
   }
 
   const handleExport = () => {
-    alert('Simulando exportação do boletim escolar oficial em formato PDF...')
+    window.print()
   }
 
   if (carregando) {
