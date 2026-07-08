@@ -7,6 +7,7 @@ import {
   IconFileAnalytics,
   IconBooks,
   IconLogout,
+  IconFileText,
   IconMenu2,
   IconChevronLeft
 } from '@tabler/icons-react'
@@ -53,7 +54,14 @@ export default function LayoutProfessor() {
             <IconUsersGroup size={20} aria-hidden="true" />
             <span>Minhas Turmas</span>
           </NavLink>
-          
+		<NavLink
+		  to="/professor/plano-ensino"
+		  className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}
+		  data-tooltip="Plano de Ensino"
+		>
+		  <IconFileText size={20} aria-hidden="true" />
+		  <span>Plano de Ensino</span>
+		</NavLink>
           <NavLink to="/professor/diario" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="Diário de Classe">
             <IconNotebook size={20} aria-hidden="true" />
             <span>Diário de Classe</span>

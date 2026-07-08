@@ -7,6 +7,7 @@ import PaginaRecuperarSenha from './features/autenticacao/paginas/PaginaRecupera
 import PaginaRedefinirSenha from './features/autenticacao/paginas/PaginaRedefinirSenha'
 import LandingPage from './pages/LandingPage/LandingPage'
 
+
 import LayoutAdministrador from './components/layout/LayoutAdministrador'
 import PaginaPainel from './features/painel/paginas/PaginaPainel'
 import PaginaListaUsuarios from './features/usuarios/paginas/PaginaListaUsuarios'
@@ -14,6 +15,8 @@ import PaginaListaDisciplinas from './features/disciplinas/paginas/PaginaListaDi
 import PaginaListaTurmas from './features/turmas/paginas/PaginaListaTurmas'
 import PaginaMatricula from './features/matriculas/paginas/PaginaMatricula'
 import PaginaRelatoriosAdministrador from './features/relatorios/paginas/PaginaRelatoriosAdministrador'
+import PaginaPlanoEnsinoProfessor from './features/professor/paginas/PaginaPlanoEnsinoProfessor'
+import PaginaPlanoEnsinoAluno from './features/aluno/paginas/PaginaPlanoEnsinoAluno'
 
 import LayoutProfessor from './components/layout/LayoutProfessor'
 import PaginaPainelProfessor from './features/professor/paginas/PaginaPainelProfessor'
@@ -114,6 +117,7 @@ function RoteadorApp() {
           <Route path="dashboard" element={<PaginaPainelProfessor />} />
           <Route path="turmas" element={<PaginaMinhasTurmas />} />
           <Route path="diario" element={<PaginaDiarioClasse />} />
+          <Route path="plano-ensino" element={<PaginaPlanoEnsinoProfessor />} />
           <Route path="ava" element={<PaginaAVAProfessor />} />
           <Route path="relatorios" element={<PaginaRelatoriosProfessor />} />
         </Route>
@@ -121,6 +125,7 @@ function RoteadorApp() {
         <Route path="/aluno" element={<RotaProtegidaAluno><LayoutAluno /></RotaProtegidaAluno>}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<PaginaPainelAluno />} />
+          <Route path="plano-ensino" element={<PaginaPlanoEnsinoAluno />} />
           <Route path="boletim" element={<PaginaBoletim />} />
           <Route path="ava" element={<PaginaAVAAluno />} />
           <Route path="horario" element={<PaginaHorario />} />

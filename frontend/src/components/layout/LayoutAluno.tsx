@@ -52,6 +52,14 @@ export default function LayoutAluno() {
             <IconFileText size={20} aria-hidden="true" />
             <span>Boletim Escolar</span>
           </NavLink>
+          <NavLink
+			  to="/aluno/plano-ensino"
+			  className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}
+			  data-tooltip="Plano de Ensino"
+			>
+			  <IconFileText size={20} aria-hidden="true" />
+			  <span>Plano de Ensino</span>
+		  </NavLink>
 
           <NavLink to="/aluno/ava" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="AVA">
             <IconBooks size={20} aria-hidden="true" />
