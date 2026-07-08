@@ -14,6 +14,7 @@ import { obterTurmas } from '../../turmas/servicos/servicoTurma'
 import { obterMatriculas } from '../../matriculas/servicos/servicoMatricula'
 import type { Turma } from '../../turmas/tipos'
 import type { Matricula } from '../../matriculas/tipos'
+import { imprimirElemento } from '../../../utils/impressaoDocumento'
 
 type TipoRelatorioProf = 'PAUTA' | 'CHAMADA'
 
@@ -82,6 +83,13 @@ export default function PaginaRelatoriosProfessor() {
       setRelatorioGerado(true)
     }, 900)
   }
+  const handleImprimirRelatorio = () => {
+    imprimirElemento({
+      elementId: 'relatorio-area-impressao-professor',
+      titulo: tipo === 'PAUTA' ? 'Pauta de Notas - SGE' : 'Diário de Chamada - SGE',
+      tipo: tipo === 'PAUTA' ? 'pauta' : 'diario'
+      })
+    }
 
   // Turma selecionada
   const turmaSelecionada = turmas.find((t) => t.id === turmaId)
@@ -218,25 +226,64 @@ export default function PaginaRelatoriosProfessor() {
           ) : (
             <div style={{ background: 'white', borderRadius: '12px', border: '1px solid var(--cor-borda)', boxShadow: 'var(--sombra-card)', overflow: 'hidden' }}>
               {/* Barra de Ações */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', backgroundColor: 'var(--cor-fundo-alternativo)', borderBottom: '1px solid var(--cor-borda)' }}>
-                <span style={{ fontSize: '12px', color: 'var(--cor-sucesso)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <IconCheck size={16} /> Caderneta Gerada com Sucesso
-                </span>
-                
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="btn-secundario" style={{ padding: '8px 12px', gap: '6px', fontSize: '13px' }} onClick={() => window.print()}>
-                    <IconDownload size={14} />
-                    Exportar
-                  </button>
-                  <button className="btn-secundario" style={{ padding: '8px 12px', gap: '6px', fontSize: '13px' }} onClick={() => window.print()}>
-                    <IconPrinter size={14} />
-                    Imprimir
-                  </button>
-                </div>
-              </div>
+              {/* Barra de Ações */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '16px 24px',
+                backgroundColor: 'var(--cor-fundo-alternativo)',
+                borderBottom: '1px solid var(--cor-borda)'
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--cor-sucesso)',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <IconCheck size={16} /> Caderneta Gerada com Sucesso
+              </span>
 
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="btn-secundario"
+                  style={{ padding: '8px 12px', gap: '6px', fontSize: '13px' }}
+                  onClick={handleImprimirRelatorio}
+                >
+                  <IconDownload size={14} />
+                  Exportar
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-secundario"
+                  style={{ padding: '8px 12px', gap: '6px', fontSize: '13px' }}
+                  onClick={handleImprimirRelatorio}
+                >
+                  <IconPrinter size={14} />
+                  Imprimir
+                </button>
+              </div>
+            </div>
               {/* Corpo do Diário de Classe Simulado */}
-              <div style={{ padding: '40px', color: 'black', fontFamily: 'serif', fontSize: '14px', lineHeight: '1.6' }}>
+              <div
+                id="relatorio-area-impressao-professor"
+                className={`documento-professor ${tipo === 'PAUTA' ? 'documento-pauta' : 'documento-diario'}`}
+                style={{
+                  padding: '40px',
+                  color: 'black',
+                  fontFamily: 'serif',
+                  fontSize: '14px',
+                  lineHeight: '1.6'
+                }}
+              >
                 {/* Cabeçalho */}
                 <div style={{ textAlign: 'center', borderBottom: '2px solid black', paddingBottom: '20px', marginBottom: '24px' }}>
                   <h2 style={{ fontFamily: 'var(--fonte-sans)', fontSize: '20px', fontWeight: 800, margin: 0, textTransform: 'uppercase' }}>Colégio Estadual de Sergipe</h2>
@@ -336,7 +383,7 @@ export default function PaginaRelatoriosProfessor() {
                 )}
               </div>
             </div>
-          )}
+        )}
         </div>
       </div>
     </PageContainer>

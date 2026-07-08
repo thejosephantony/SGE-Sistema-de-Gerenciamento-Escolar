@@ -10,6 +10,7 @@ import PageContainer from '../../../components/ui/ContainerPagina'
 import PageHeader from '../../../components/ui/CabecalhoPagina'
 import { buscarMatriculasPorDiscente } from '../../matriculas/servicos/servicoMatricula'
 import type { Matricula } from '../../matriculas/tipos'
+import { imprimirElemento } from '../../../utils/impressaoDocumento'
 
 export default function PaginaBoletim() {
   const { usuario } = useAuth()
@@ -36,13 +37,17 @@ export default function PaginaBoletim() {
     carregarBoletim()
   }, [usuario])
 
-  const handlePrint = () => {
-    window.print()
+  const handleImprimirBoletim = () => {
+  imprimirElemento({
+    elementId: 'boletim-area-impressao-aluno',
+    titulo: 'Boletim Escolar - SGE',
+    tipo: 'boletim'
+  })
   }
 
-  const handleExport = () => {
-    window.print()
-  }
+   const handlePrint = handleImprimirBoletim
+
+   const handleExport = handleImprimirBoletim
 
   if (carregando) {
     return (
@@ -100,7 +105,11 @@ export default function PaginaBoletim() {
         </div>
 
         {/* Boletim Escolar Físico Simulador */}
-        <div style={{ padding: '40px', color: 'black', lineHeight: '1.6' }} className="print-area">
+        <div
+            id="boletim-area-impressao-aluno"
+            className="print-area documento-boletim"
+            style={{ padding: '40px', color: 'black', lineHeight: '1.6' }}
+        >
           {/* Topo do documento */}
           <div style={{ textAlign: 'center', borderBottom: '2px solid black', paddingBottom: '20px', marginBottom: '24px' }}>
             <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, textTransform: 'uppercase', color: 'black' }}>Colégio Estadual de Sergipe</h2>
