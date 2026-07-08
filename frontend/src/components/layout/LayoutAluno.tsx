@@ -4,6 +4,7 @@ import {
   IconLayoutDashboard, 
   IconFileText, 
   IconCalendar,
+  IconUserCircle,
   IconBooks,
   IconLogout,
   IconMenu2,
@@ -43,6 +44,14 @@ export default function LayoutAluno() {
         </button>
 
         <nav className="admin-sidebar-menu">
+			<NavLink
+		  to="/aluno/meu-perfil"
+		  className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}
+		  data-tooltip="Meu Perfil"
+		>
+		  <IconUserCircle size={20} aria-hidden="true" />
+		  <span>Meu Perfil</span>
+		</NavLink>
           <NavLink to="/aluno/dashboard" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="Painel Geral">
             <IconLayoutDashboard size={20} aria-hidden="true" />
             <span>Painel Geral</span>

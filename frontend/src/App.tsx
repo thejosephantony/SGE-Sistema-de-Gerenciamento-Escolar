@@ -6,7 +6,7 @@ import PaginaLogin from './features/autenticacao/paginas/PaginaLogin'
 import PaginaRecuperarSenha from './features/autenticacao/paginas/PaginaRecuperarSenha'
 import PaginaRedefinirSenha from './features/autenticacao/paginas/PaginaRedefinirSenha'
 import LandingPage from './pages/LandingPage/LandingPage'
-
+import PaginaMeuPerfil from './features/perfil/paginas/PaginaMeuPerfil'
 
 import LayoutAdministrador from './components/layout/LayoutAdministrador'
 import PaginaPainel from './features/painel/paginas/PaginaPainel'
@@ -30,7 +30,6 @@ import PaginaPainelAluno from './features/aluno/paginas/PaginaPainelAluno'
 import PaginaBoletim from './features/aluno/paginas/PaginaBoletim'
 import PaginaHorario from './features/aluno/paginas/PaginaHorario'
 import PaginaAVAAluno from './features/ava/paginas/PaginaAVAAluno'
-
 
 function RotaProtegida({ children }: { children: ReactNode }) {
   const { usuario, carregandoContexto } = useAuth()
@@ -117,6 +116,7 @@ function RoteadorApp() {
           <Route path="dashboard" element={<PaginaPainelProfessor />} />
           <Route path="turmas" element={<PaginaMinhasTurmas />} />
           <Route path="diario" element={<PaginaDiarioClasse />} />
+          <Route path="meu-perfil" element={<PaginaMeuPerfil />} />
           <Route path="plano-ensino" element={<PaginaPlanoEnsinoProfessor />} />
           <Route path="ava" element={<PaginaAVAProfessor />} />
           <Route path="relatorios" element={<PaginaRelatoriosProfessor />} />
@@ -126,6 +126,7 @@ function RoteadorApp() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<PaginaPainelAluno />} />
           <Route path="plano-ensino" element={<PaginaPlanoEnsinoAluno />} />
+          <Route path="meu-perfil" element={<PaginaMeuPerfil />} />
           <Route path="boletim" element={<PaginaBoletim />} />
           <Route path="ava" element={<PaginaAVAAluno />} />
           <Route path="horario" element={<PaginaHorario />} />

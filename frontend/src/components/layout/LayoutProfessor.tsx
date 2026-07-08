@@ -6,6 +6,7 @@ import {
   IconNotebook, 
   IconFileAnalytics,
   IconBooks,
+  IconUserCircle,
   IconLogout,
   IconFileText,
   IconMenu2,
@@ -45,6 +46,14 @@ export default function LayoutProfessor() {
         </button>
 
         <nav className="admin-sidebar-menu">
+        <NavLink
+		  to="/professor/meu-perfil"
+		  className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}
+		  data-tooltip="Meu Perfil"
+		>
+		  <IconUserCircle size={20} aria-hidden="true" />
+		  <span>Meu Perfil</span>
+		</NavLink>
           <NavLink to="/professor/dashboard" className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`} data-tooltip="Painel Geral">
             <IconLayoutDashboard size={20} aria-hidden="true" />
             <span>Painel Geral</span>
