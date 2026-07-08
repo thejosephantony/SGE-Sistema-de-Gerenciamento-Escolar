@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import type { ErrosFormulario } from '../tipos'
 
@@ -200,21 +201,20 @@ export default function FormularioLogin({
             onChange={(e) => setLembrarMe(e.target.checked)}
             disabled={carregando}
           />
-          Lembrar de mim
+          <span>Lembrar-me</span>
         </label>
 
-        <a
-          href="#recuperar-senha"
-          onClick={(e) => {
-            e.preventDefault()
-            onMessage(
-              'A recuperação de senha será integrada em uma etapa futura.',
-              'sucesso'
-            )
+        <Link
+          to="/recuperar-senha"
+          style={{
+            color: 'var(--cor-primaria)',
+            fontSize: '13px',
+            fontWeight: 700,
+            textDecoration: 'none'
           }}
         >
-          Esqueceu a senha?
-        </a>
+          Esqueci minha senha
+        </Link>
       </div>
 
       <motion.button

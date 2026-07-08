@@ -2,7 +2,10 @@ import { apiFetch, removerToken, salvarToken } from './api'
 import type {
   LoginRequest,
   LoginResponse,
-  UsuarioAutenticado
+  UsuarioAutenticado,
+  EsqueciSenhaRequest,
+  RedefinirSenhaRequest,
+  MensagemResponse
 } from '../types/auth'
 
 const USUARIO_STORAGE_KEY = 'sge_usuario'
@@ -42,6 +45,24 @@ export const authService = {
 
     return resposta
   },
+  
+	async solicitarRecuperacaoSenha(
+	  dados: EsqueciSenhaRequest
+	): Promise<MensagemResponse> {
+	  return apiFetch<MensagemResponse>('/auth/esqueci-senha', {
+		method: 'POST',
+		body: JSON.stringify(dados)
+	  })
+	},
+
+	async redefinirSenha(
+	  dados: RedefinirSenhaRequest
+	): Promise<MensagemResponse> {
+	  return apiFetch<MensagemResponse>('/auth/redefinir-senha', {
+		method: 'POST',
+		body: JSON.stringify(dados)
+	  })
+	},
 
   async me(): Promise<UsuarioAutenticado> {
     const usuario = await apiFetch<UsuarioAutenticado>('/auth/me', {

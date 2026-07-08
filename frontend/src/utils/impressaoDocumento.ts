@@ -216,9 +216,9 @@ export function imprimirElemento({ elementId, titulo, tipo = 'boletim' }: Opcoes
         </style>
       </head>
 
-      <body>
-        ${area.outerHTML}
-      </body>
+      <body class="documento-${tipo}">
+		  ${area.outerHTML}
+	  </body>
     </html>
   `)
 

@@ -3,6 +3,8 @@ import type { ReactNode } from 'react'
 import { AuthProvider, useAuth } from './contexts/ContextoAutenticacao'
 
 import PaginaLogin from './features/autenticacao/paginas/PaginaLogin'
+import PaginaRecuperarSenha from './features/autenticacao/paginas/PaginaRecuperarSenha'
+import PaginaRedefinirSenha from './features/autenticacao/paginas/PaginaRedefinirSenha'
 import LandingPage from './pages/LandingPage/LandingPage'
 
 import LayoutAdministrador from './components/layout/LayoutAdministrador'
@@ -25,6 +27,7 @@ import PaginaPainelAluno from './features/aluno/paginas/PaginaPainelAluno'
 import PaginaBoletim from './features/aluno/paginas/PaginaBoletim'
 import PaginaHorario from './features/aluno/paginas/PaginaHorario'
 import PaginaAVAAluno from './features/ava/paginas/PaginaAVAAluno'
+
 
 function RotaProtegida({ children }: { children: ReactNode }) {
   const { usuario, carregandoContexto } = useAuth()
@@ -71,7 +74,31 @@ function RoteadorApp() {
             : <Navigate to="/aluno/dashboard" replace />
             : <PaginaLogin />
         } />
+		<Route
+			  path="/recuperar-senha"
+			  element={
+				usuario
+				  ? usuario.perfil === 'ADMINISTRADOR'
+					? <Navigate to="/admin/dashboard" replace />
+					: usuario.perfil === 'DOCENTE'
+					  ? <Navigate to="/professor/dashboard" replace />
+					  : <Navigate to="/aluno/dashboard" replace />
+				  : <PaginaRecuperarSenha />
+			  }
+			/>
 
+			<Route
+			  path="/redefinir-senha"
+			  element={
+				usuario
+				  ? usuario.perfil === 'ADMINISTRADOR'
+					? <Navigate to="/admin/dashboard" replace />
+					: usuario.perfil === 'DOCENTE'
+					  ? <Navigate to="/professor/dashboard" replace />
+					  : <Navigate to="/aluno/dashboard" replace />
+				  : <PaginaRedefinirSenha />
+			  }
+			/>
         <Route path="/admin" element={<RotaProtegida><LayoutAdministrador /></RotaProtegida>}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<PaginaPainel />} />

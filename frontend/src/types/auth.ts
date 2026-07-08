@@ -20,4 +20,15 @@ export interface LoginResponse {
   tipo: string
   usuario: UsuarioAutenticado
 }
+export interface EsqueciSenhaRequest {
+  email: string
+}
 
+export interface RedefinirSenhaRequest {
+  token: string
+  novaSenha: string
+}
+
+export interface MensagemResponse {
+  mensagem: string
+}
