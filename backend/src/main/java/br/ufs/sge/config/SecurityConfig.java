@@ -3,6 +3,7 @@ package br.ufs.sge.config;
 import br.ufs.sge.security.JwtAuthenticationFilter;
 import br.ufs.sge.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -31,6 +32,9 @@ public class SecurityConfig {
     private final UsuarioRepository usuarioRepository;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Value("${sge.cors.allowed-origin:http://localhost:5173}")
+    private String allowedOrigin;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -43,10 +47,10 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-								"/api/auth/login",
-								"/api/auth/esqueci-senha",
-								"/api/auth/redefinir-senha"
-						).permitAll()
+                                "/api/auth/login",
+                                "/api/auth/esqueci-senha",
+                                "/api/auth/redefinir-senha"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
@@ -76,7 +80,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of(allowedOrigin));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
