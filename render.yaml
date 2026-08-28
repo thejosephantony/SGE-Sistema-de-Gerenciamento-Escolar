@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: sge-escolar-api-josephantony
+    runtime: docker
+    plan: free
+    region: virginia
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    autoDeployTrigger: commit
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: sge-escolar-db-josephantony
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: sge-escolar-db-josephantony
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: sge-escolar-db-josephantony
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: sge-escolar-db-josephantony
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: sge-escolar-db-josephantony
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGIN
+        value: https://sge-escolar-web-josephantony.onrender.com
+
+  - type: web
+    name: sge-escolar-web-josephantony
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeployTrigger: commit
+    envVars:
+      - key: VITE_API_URL
+        value: https://sge-escolar-api-josephantony.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: sge-escolar-db-josephantony
+    databaseName: sge
+    user: sge_user
+    plan: free
+    region: virginia
+    postgresMajorVersion: 16
